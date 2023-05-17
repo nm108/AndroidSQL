@@ -8,18 +8,18 @@ import android.widget.EditText;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
-    Button btnSignUp;
-    EditText ebb;
+    Button doQueryButton;
+    EditText userNameEditText;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        btnSignUp = findViewById(R.id.Btn);
-        ebb = findViewById(R.id.Eb);
-        btnSignUp.setOnClickListener(new View.OnClickListener() {
+        doQueryButton = findViewById(R.id.Btn);
+        userNameEditText = findViewById(R.id.Eb);
+        doQueryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String userName = ebb.getText().toString().trim();
+                final String userName = userNameEditText.getText().toString().trim();
                 new QueryForUserDataAsyncTask(MainActivity.this, userName).execute();
             }
         });
