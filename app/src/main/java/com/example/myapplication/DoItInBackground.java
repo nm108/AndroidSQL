@@ -22,7 +22,7 @@ public class DoItInBackground extends AsyncTask <Void,Void,Void> {
 
     protected Void doInBackground(Void... voids) {
         try {
-            Connection conn = (new ConnectionClass()).CONN();
+            Connection conn = (new DatabaseConnection()).getConnection();
             Statement statement = conn.createStatement();
             ResultSet rs = statement.executeQuery("SELECT * From USERS where UserName='"+name+"'");
             if (rs.next()) {
