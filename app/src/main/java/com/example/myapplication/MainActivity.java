@@ -19,7 +19,8 @@ public class MainActivity extends AppCompatActivity {
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new QueryForUserDataAsyncTask(MainActivity.this, ebb.getText().toString().trim()).execute();
+                final String userName = ebb.getText().toString().trim();
+                new QueryForUserDataAsyncTask(MainActivity.this, userName).execute();
             }
         });
     }
