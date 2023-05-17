@@ -7,8 +7,8 @@ import android.widget.EditText;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
-    Button doQueryButton;
-    EditText userNameEditText;
+    private Button doQueryButton;
+    private EditText userNameEditText;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
