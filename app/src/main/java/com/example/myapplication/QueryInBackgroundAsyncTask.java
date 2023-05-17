@@ -10,7 +10,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-public class QueryBackgroundTask extends AsyncTask <Void,Void,Void> {
+public class QueryInBackgroundAsyncTask extends AsyncTask <Void,Void,Void> {
     final Context c;
     String messageToDisplay;
     final String userName;
@@ -18,7 +18,7 @@ public class QueryBackgroundTask extends AsyncTask <Void,Void,Void> {
 
     final String okLabel = "OK";
 
-    public QueryBackgroundTask(Context context, String n) {
+    public QueryInBackgroundAsyncTask(Context context, String n) {
         this.c=context;
         this.userName=n;
     }
