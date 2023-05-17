@@ -10,28 +10,31 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-public class DoItInBackground extends AsyncTask <Void,Void,Void> {
-    Context c;
-    String Res, name;
+public class QueryBackgroundTask extends AsyncTask <Void,Void,Void> {
+    final Context c;
+    String messageToDisplay;
+    final String userName;
     ProgressDialog progressDialog;
 
-    public DoItInBackground(Context context, String n) {
-        c=context;
-        name=n;
+    final String okLabel = "OK";
+
+    public QueryBackgroundTask(Context context, String n) {
+        this.c=context;
+        this.userName=n;
     }
 
     protected Void doInBackground(Void... voids) {
         try {
             Connection conn = (new DatabaseConnection()).getConnection();
             Statement statement = conn.createStatement();
-            ResultSet rs = statement.executeQuery("SELECT * From USERS where UserName='"+name+"'");
+            ResultSet rs = statement.executeQuery("SELECT * From USERS where UserName='"+ userName +"'");
             if (rs.next()) {
-                Res="Username: "+name+" exists with ID: "+rs.getString(2);
+                messageToDisplay="Username: "+ userName +" exists with ID: "+rs.getString(2);
             } else {
-                Res="User not found with username: "+name;
+                messageToDisplay="User not found with username: "+ userName;
             }
         } catch (Exception e) {
-            Res = e.getMessage();
+            messageToDisplay = e.getMessage();
         }
         return null;
     }
@@ -52,13 +55,14 @@ public class DoItInBackground extends AsyncTask <Void,Void,Void> {
         progressDialog.dismiss();
         AlertDialog alertDialog = new AlertDialog.Builder(c).create();
         alertDialog.setTitle("Message");
-        alertDialog.setMessage(Res);
+        alertDialog.setMessage(messageToDisplay);
         alertDialog.setButton(
 
-                AlertDialog.BUTTON_NEUTRAL, (CharSequence) "Ok", (DialogInterface.OnClickListener) (dialog, which) -> {
-                dialog.dismiss();
-            });
+                AlertDialog.BUTTON_NEUTRAL, (CharSequence) okLabel,
+                    (DialogInterface.OnClickListener) (dialog, which) -> {
+                        dialog.dismiss(); });
         alertDialog.show();
     };
+
 }
 

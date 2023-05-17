@@ -7,8 +7,6 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.myapplication.R;
-
 public class MainActivity extends AppCompatActivity {
     Button btnSignUp;
     EditText ebb;
@@ -21,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new DoItInBackground(MainActivity.this, ebb.getText().toString().trim()).execute();
+                new QueryBackgroundTask(MainActivity.this, ebb.getText().toString().trim()).execute();
             }
         });
     }

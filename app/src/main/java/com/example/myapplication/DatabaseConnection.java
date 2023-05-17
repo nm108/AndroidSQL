@@ -8,14 +8,14 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DatabaseConnection {
-    String ip = "192.168.1.103:1433";
-    String driverClass = "net.sourceforge.jtds.jdbc.Driver";
-    String dbInstance = "AWDBINSTANCE";
-    String db = "DBAW";
-    String userName = "aw108";
-    String password = "Firewall123";
+    final String ip = "192.168.1.103:1433";
+    final String driverClass = "net.sourceforge.jtds.jdbc.Driver";
+    final String dbInstance = "AWDBINSTANCE";
+    final String db = "DBAW";
+    final String userName = "aw108";
+    final String password = "Firewall123";
 
-    String connURL = "jdbc:jtds:sqlserver://"+ip+";instance="+dbInstance+";Database='"+db+"'";
+    final String connURL = "jdbc:jtds:sqlserver://"+ip+";instance="+dbInstance+";Database='"+db+"'";
 
     Connection conn = null;
 
