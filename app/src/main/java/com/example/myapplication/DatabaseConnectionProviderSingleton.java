@@ -14,7 +14,7 @@ import java.sql.SQLException;
  * @author Andrzej Wysocki
  */
 
-public class DatabaseConnectionSingleton {
+public class DatabaseConnectionProviderSingleton {
     private static final String ip = "192.168.1.103:1433";
     private static final String driverClass = "net.sourceforge.jtds.jdbc.Driver";
     private static final String dbInstance = "AWDBINSTANCE";

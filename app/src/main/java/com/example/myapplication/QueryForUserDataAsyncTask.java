@@ -48,7 +48,7 @@ public class QueryForUserDataAsyncTask extends AsyncTask <Void,Void,Void> {
 
     protected Void doInBackground(Void... voids) {
         try {
-            final Connection conn = DatabaseConnectionSingleton.getConnection();
+            final Connection conn = DatabaseConnectionProviderSingleton.getConnection();
             final Statement statement = conn.createStatement();
             final ResultSet rs = statement.executeQuery("SELECT * From USERS where UserName='"+ userName +"'");
             if (rs.next()) {
