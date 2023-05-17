@@ -1,7 +1,6 @@
 package com.example.myapplication;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -16,12 +15,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         doQueryButton = findViewById(R.id.Btn);
         userNameEditText = findViewById(R.id.Eb);
-        doQueryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+
+        doQueryButton.setOnClickListener(
+            v -> {
                 final String userName = userNameEditText.getText().toString().trim();
                 new QueryForUserDataAsyncTask(MainActivity.this, userName).execute();
             }
-        });
+        );
     }
 }
