@@ -6,6 +6,10 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+
+/**
+ * Entry point for application.
+ */
 public class MainActivity extends AppCompatActivity {
     private Button doQueryButton;
     private EditText userNameEditText;
