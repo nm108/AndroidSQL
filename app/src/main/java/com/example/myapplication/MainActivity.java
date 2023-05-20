@@ -15,8 +15,9 @@ public class MainActivity extends AppCompatActivity {
      Button databaseConnectionConfigurationButton;
 
      Button selectButton;
-    Button insertButton;
+     Button insertButton;
      Button updateButton;
+     Button deleteButton;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -42,6 +43,13 @@ public class MainActivity extends AppCompatActivity {
         updateButton.setOnClickListener(
                 (final View v) -> {
                     switchActivityTo(UpdateActivity.class);
+                }
+        );
+
+        deleteButton = findViewById(R.id.DeleteButton);
+        deleteButton.setOnClickListener(
+                (final View v) -> {
+                    switchActivityTo(DeleteActivity.class);
                 }
         );
     }
