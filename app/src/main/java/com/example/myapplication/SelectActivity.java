@@ -12,23 +12,23 @@ import androidx.appcompat.app.AppCompatActivity;
 /**
  * Entry point for application.
  */
-public class DatabaseQueryActivity extends AppCompatActivity {
-    private Button doQueryButton;
+public class SelectActivity extends AppCompatActivity {
+    private Button doSelectQueryButton;
     private EditText userNameEditText;
 
     private Button returnButton;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_database_query);
-        doQueryButton = findViewById(R.id.DoQueryButton);
+        setContentView(R.layout.activity_select);
+        doSelectQueryButton = findViewById(R.id.DoSelectQueryButton);
         userNameEditText = findViewById(R.id.UserNameEditText);
-        returnButton = findViewById(R.id.SwitchActivitiesButton);
+        returnButton = findViewById(R.id.ReturnButton);
 
-        doQueryButton.setOnClickListener(
+        doSelectQueryButton.setOnClickListener(
             (final View v) -> {
                 final String userName = userNameEditText.getText().toString().trim();
-                new QueryForUserDataAsyncTask(DatabaseQueryActivity.this, userName).execute();
+                new QueryForUserDataAsyncTask(SelectActivity.this, userName).execute();
             }
         );
 

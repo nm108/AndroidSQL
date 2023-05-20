@@ -23,9 +23,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SecondaryActivity">
-        </activity>
-        <activity android:name=".DatabaseQueryActivity"></activity>
+        <activity android:name=".SecondaryActivity"></activity>
+        <activity android:name=".SelectActivity"></activity>
+        <activity android:name=".UpdateActivity"></activity>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

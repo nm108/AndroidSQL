@@ -54,7 +54,7 @@ public class SecondaryActivity extends AppCompatActivity {
     }
 
     private void switchActivities() {
-        Intent switchActivityIntent = new Intent(this, DatabaseQueryActivity.class);
+        Intent switchActivityIntent = new Intent(this, SelectActivity.class);
         startActivity(switchActivityIntent);
     }
 }

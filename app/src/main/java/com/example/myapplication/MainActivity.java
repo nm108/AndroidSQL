@@ -14,26 +14,32 @@ import androidx.appcompat.app.AppCompatActivity;
 public class MainActivity extends AppCompatActivity {
      Button databaseConnectionConfigurationButton;
 
-     Button databaseQueryButton;
+     Button selectButton;
 
+     Button updateButton;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         databaseConnectionConfigurationButton = findViewById(R.id.DatabaseConnectionConfigurationButton);
-        databaseQueryButton = findViewById(R.id.DatabaseQueryButton);
-        databaseQueryButton.setOnClickListener(
+
+
+        selectButton = findViewById(R.id.SelectButton);
+
+        selectButton.setOnClickListener(
                 (final View v) -> {
-                   goToDBConfButton();
+                    switchActivityTo(SelectActivity.class);
                 }
         );
-
-
-
+        updateButton = findViewById(R.id.UpdateButton);
+        updateButton.setOnClickListener(
+                (final View v) -> {
+                    switchActivityTo(UpdateActivity.class);
+                }
+        );
     }
 
-
-    private void goToDBConfButton() {
-        Intent switchActivityIntent = new Intent(MainActivity.this, DatabaseQueryActivity.class);
+    private void switchActivityTo(Class activityClass) {
+        Intent switchActivityIntent = new Intent(MainActivity.this, activityClass);
         startActivity(switchActivityIntent);
     }
 }
