@@ -14,16 +14,20 @@ import androidx.appcompat.app.AppCompatActivity;
 public class MainActivity extends AppCompatActivity {
      Button databaseConnectionConfigurationButton;
 
+     Button databaseQueryButton;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         databaseConnectionConfigurationButton = findViewById(R.id.DatabaseConnectionConfigurationButton);
-
-        databaseConnectionConfigurationButton.setOnClickListener(
+        databaseQueryButton = findViewById(R.id.DatabaseQueryButton);
+        databaseQueryButton.setOnClickListener(
                 (final View v) -> {
                    goToDBConfButton();
                 }
         );
+
+
 
     }
 
