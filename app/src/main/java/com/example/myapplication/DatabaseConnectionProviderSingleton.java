@@ -33,7 +33,7 @@ public class DatabaseConnectionProviderSingleton {
     }
     public static Connection getConnection() {
         try {
-            if (conn.isClosed()) { conn = null; }
+            if (conn != null && conn.isClosed()) { conn = null; }
         } catch (SQLException e) { conn = null; }
 
         if (conn == null ) {
