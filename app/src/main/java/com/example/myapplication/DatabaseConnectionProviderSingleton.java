@@ -32,7 +32,11 @@ public class DatabaseConnectionProviderSingleton {
         StrictMode.setThreadPolicy(policy);
     }
     public static Connection getConnection() {
-        if (conn == null) {
+        try {
+            if (conn.isClosed()) { conn = null; }
+        } catch (SQLException e) { conn = null; }
+
+        if (conn == null ) {
             try {
                 Class.forName(driverClass);
                 conn = DriverManager.getConnection(connURL, userName, password);
