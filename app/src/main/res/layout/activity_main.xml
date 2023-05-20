@@ -6,31 +6,12 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-    <EditText
-        android:id="@+id/UserNameEditText"
-        android:layout_width="300dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="200dp"
-        android:layout_marginLeft="50dp"
-        android:hint="Enter user name here"
-        android:text="">
-
-    </EditText>
-
     <Button
-        android:id="@+id/DoQueryButton"
+        android:id="@+id/DatabaseConnectionConfigurationButton"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_margin="50dp"
         android:text="Query database for user"></Button>
-
-    <Button android:id="@+id/SwitchActivitiesButton"
-        android:layout_marginLeft="100dp"
-        android:layout_marginTop="400dp"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:text="@string/my_button_text"></Button>
--->
 </RelativeLayout>
 
 

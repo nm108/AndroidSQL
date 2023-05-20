@@ -25,6 +25,7 @@
         </activity>
         <activity android:name=".SecondaryActivity">
         </activity>
+        <activity android:name=".DatabaseQueryActivity"></activity>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />
