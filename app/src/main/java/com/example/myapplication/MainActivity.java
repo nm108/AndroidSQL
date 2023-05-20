@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
      Button databaseConnectionConfigurationButton;
 
      Button selectButton;
-
+    Button insertButton;
      Button updateButton;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +30,14 @@ public class MainActivity extends AppCompatActivity {
                     switchActivityTo(SelectActivity.class);
                 }
         );
+
+        insertButton = findViewById(R.id.InsertButton);
+        insertButton.setOnClickListener(
+                (final View v) -> {
+                    switchActivityTo(InsertActivity.class);
+                }
+        );
+
         updateButton = findViewById(R.id.UpdateButton);
         updateButton.setOnClickListener(
                 (final View v) -> {

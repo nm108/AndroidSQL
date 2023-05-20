@@ -23,13 +23,20 @@
         android:layout_marginTop="150dp"
         android:text="SELECT"></Button>
 
+    <Button
+        android:id="@+id/InsertButton"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="200dp"
+        android:text="INSERT"></Button>
 
     <Button
         android:id="@+id/UpdateButton"
         android:layout_width="300dp"
         android:layout_height="50dp"
         android:layout_marginLeft="50dp"
-        android:layout_marginTop="200dp"
+        android:layout_marginTop="250dp"
         android:text="UPDATE"></Button>
 </RelativeLayout>
 
