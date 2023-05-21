@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,11 +16,22 @@ public class RemoteDBConfigActivity extends AppCompatActivity {
 
     private Button returnButton;
 
+    private TextView titleTextView;
+
+    private TextView ipAddressTextView;
+
+    private EditText ipAddressEditText;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_remote_db_config);
-        returnButton = findViewById(R.id.ReturnButton);
 
+        titleTextView = findViewById(R.id.TitleTextView);
+        ipAddressTextView = findViewById(R.id.IPAddressTextView);
+
+        ipAddressEditText = findViewById(R.id.IPAddressEditText);
+
+        returnButton = findViewById(R.id.ReturnButton);
         returnButton.setOnClickListener(
                 (final View v) -> {
                     switchActivities();

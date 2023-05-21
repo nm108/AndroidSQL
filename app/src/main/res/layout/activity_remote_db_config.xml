@@ -15,17 +15,44 @@
 
     <Button android:id="@+id/SaveConfigButton"
         android:layout_marginLeft="100dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="150dp"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:text="Save DB Connectio Configuration"></Button>
+        android:text="Save DB Connection Configuration"></Button>
 
     <Button android:id="@+id/ResetToDefaultsButton"
-        android:layout_marginLeft="105dp"
-        android:layout_marginTop="200dp"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="250dp"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:text="Reset to default values"></Button>
+
+    <TextView
+        android:id="@+id/TitleTextView"
+        android:layout_height="50dp"
+        android:layout_width="400dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:textSize="20dp"
+        android:text="Database Connection Configuration"></TextView>
+
+    <TextView
+        android:id="@+id/IPAddressTextView"
+        android:layout_height="50dp"
+        android:layout_width="120dp"
+        android:layout_marginTop="70dp"
+        android:layout_marginLeft="20dp"
+        android:textSize="20dp"
+        android:text="IP Address:"></TextView>
+
+    <EditText
+        android:id="@+id/IPAddressEditText"
+        android:layout_height="50dp"
+        android:layout_width="220dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginLeft="125dp"
+        android:inputType="text"></EditText>
+
 
 </RelativeLayout>
 
