@@ -22,14 +22,19 @@ public class RemoteDBConfigActivity extends AppCompatActivity {
 
     private EditText ipAddressEditText;
 
+    private TextView portTextView;
+
+    private EditText portEditText;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_remote_db_config);
 
         titleTextView = findViewById(R.id.TitleTextView);
         ipAddressTextView = findViewById(R.id.IPAddressTextView);
-
         ipAddressEditText = findViewById(R.id.IPAddressEditText);
+        portTextView = findViewById(R.id.PortTextView);
+        portEditText = findViewById(R.id.PortEditText);
 
         returnButton = findViewById(R.id.ReturnButton);
         returnButton.setOnClickListener(
