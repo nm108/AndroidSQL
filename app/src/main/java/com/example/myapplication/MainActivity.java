@@ -22,10 +22,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         databaseConnectionConfigurationButton = findViewById(R.id.DatabaseConnectionConfigurationButton);
-
+        databaseConnectionConfigurationButton.setOnClickListener(
+                (final View v) -> {
+                    switchActivityTo(RemoteDBConfigActivity.class);
+                }
+        );
 
         selectButton = findViewById(R.id.SelectButton);
-
         selectButton.setOnClickListener(
                 (final View v) -> {
                     switchActivityTo(SelectActivity.class);
