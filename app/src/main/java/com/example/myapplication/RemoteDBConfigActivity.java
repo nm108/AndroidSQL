@@ -26,6 +26,9 @@ public class RemoteDBConfigActivity extends AppCompatActivity {
 
     private EditText portEditText;
 
+    private TextView dbNameTextView;
+
+    private EditText dbNameEditText;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_remote_db_config);
@@ -35,6 +38,8 @@ public class RemoteDBConfigActivity extends AppCompatActivity {
         ipAddressEditText = findViewById(R.id.IPAddressEditText);
         portTextView = findViewById(R.id.PortTextView);
         portEditText = findViewById(R.id.PortEditText);
+        dbNameTextView = findViewById(R.id.DBNameTextView);
+        dbNameEditText = findViewById(R.id.DBNameEditText);
 
         returnButton = findViewById(R.id.ReturnButton);
         returnButton.setOnClickListener(
