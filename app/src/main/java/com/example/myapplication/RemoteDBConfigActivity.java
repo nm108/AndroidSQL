@@ -10,6 +10,9 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class RemoteDBConfigActivity extends AppCompatActivity {
+
+    private RemoteDBConfig rdbc = new RemoteDBConfig();
+
     private Button saveConfigButton;
 
     private Button ResetToDefaultsButton;
@@ -29,6 +32,11 @@ public class RemoteDBConfigActivity extends AppCompatActivity {
     private TextView dbNameTextView;
 
     private EditText dbNameEditText;
+
+    private TextView dbInstanceTextView;
+
+    private EditText dbInstanceEditText;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_remote_db_config);
@@ -40,6 +48,13 @@ public class RemoteDBConfigActivity extends AppCompatActivity {
         portEditText = findViewById(R.id.PortEditText);
         dbNameTextView = findViewById(R.id.DBNameTextView);
         dbNameEditText = findViewById(R.id.DBNameEditText);
+        dbInstanceTextView = findViewById(R.id.DBInstanceTextView);
+        dbInstanceEditText = findViewById(R.id.DBInstanceEditText);
+
+        ipAddressEditText.setText(rdbc.getIpAddress());
+        portEditText.setText(rdbc.getPort());
+        dbNameEditText.setText(rdbc.getDefaultDBName());
+        dbInstanceEditText.setText(rdbc.getDefaultDBInstance());
 
         returnButton = findViewById(R.id.ReturnButton);
         returnButton.setOnClickListener(
