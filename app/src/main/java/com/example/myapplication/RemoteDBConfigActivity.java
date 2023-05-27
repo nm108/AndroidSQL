@@ -11,11 +11,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class RemoteDBConfigActivity extends AppCompatActivity {
 
-    private RemoteDBConfig rdbc = new RemoteDBConfig();
+    private RemoteDBConfig rdbc = new RemoteDBConfig(RemoteDBConfigActivity.this);
 
     private Button saveConfigButton;
 
-    private Button ResetToDefaultsButton;
+    private Button resetToDefaultsButton;
 
     private Button returnButton;
 
@@ -55,6 +55,30 @@ public class RemoteDBConfigActivity extends AppCompatActivity {
         portEditText.setText(rdbc.getPort());
         dbNameEditText.setText(rdbc.getDefaultDBName());
         dbInstanceEditText.setText(rdbc.getDefaultDBInstance());
+
+
+        saveConfigButton = findViewById(R.id.SaveConfigButton);
+        saveConfigButton.setOnClickListener(
+                (final View v) -> {
+                    rdbc.setDbConfigValue(RemoteDBConfigActivity.this, findViewById(R.id.IPAddressEditText), FeedEntry.IP_ADDRESS);
+                    rdbc.setDbConfigValue(RemoteDBConfigActivity.this, findViewById(R.id.PortEditText), FeedEntry.PORT);
+                    rdbc.setDbConfigValue(RemoteDBConfigActivity.this, findViewById(R.id.DBNameEditText), FeedEntry.DB_NAME);
+                    rdbc.setDbConfigValue(RemoteDBConfigActivity.this, findViewById(R.id.DBInstanceEditText), FeedEntry.DB_INSTANCE);
+                });
+
+
+
+        resetToDefaultsButton = findViewById(R.id.ResetToDefaultsButton);
+        resetToDefaultsButton.setOnClickListener(
+                (final View v) -> {
+                    rdbc.setDbConfigToDefault(RemoteDBConfigActivity.this);
+
+                    // restart activity
+                    finish();
+                    startActivity(getIntent());
+
+                }
+        );
 
         returnButton = findViewById(R.id.ReturnButton);
         returnButton.setOnClickListener(
