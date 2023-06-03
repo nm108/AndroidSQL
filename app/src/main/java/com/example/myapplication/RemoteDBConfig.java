@@ -12,9 +12,9 @@ public class RemoteDBConfig {
     private String defaultDBName = "DBAW";
     private String defaultDBInstance = "AWDBINSTANCE";
 
-    private final String defaultUserName = "aw108";
+    private final String defaultUserName = "?";
 
-    private final String defaultPassword = "Firewall123";
+    private final String defaultPassword = "?";
 
     private Context context;
 
