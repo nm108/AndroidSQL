@@ -12,6 +12,10 @@ public class RemoteDBConfig {
     private String defaultDBName = "DBAW";
     private String defaultDBInstance = "AWDBINSTANCE";
 
+    private final String defaultUserName = "aw108";
+
+    private final String defaultPassword = "Firewall123";
+
     private Context context;
 
     FeedReaderDbHelper dbHelper = new FeedReaderDbHelper(context);
@@ -80,6 +84,28 @@ public class RemoteDBConfig {
         }
     }
 
+    public String getDefaultUserName() {
+
+        String result = getDbFieldValue(4);
+        // add code that handles configuration written in local SQLite
+        // Android database.
+        if (result == null) {
+            return defaultUserName;
+        } else {
+            return result;
+        }
+    }
+    public String getDefaultPassword() {
+
+        String result = getDbFieldValue(5);
+        // add code that handles configuration written in local SQLite
+        // Android database.
+        if (result == null) {
+            return defaultPassword;
+        } else {
+            return result;
+        }
+    }
     private String getDbFieldValue(int i) {
         FeedReaderDbHelper frdbh = new FeedReaderDbHelper(context);
         List entry = frdbh.getDBConfigArray();

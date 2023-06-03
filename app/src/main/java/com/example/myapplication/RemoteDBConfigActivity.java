@@ -37,6 +37,14 @@ public class RemoteDBConfigActivity extends AppCompatActivity {
 
     private EditText dbInstanceEditText;
 
+    private TextView usernameTextView;
+
+    private EditText userNameEditText;
+
+    private TextView passwordTextView;
+
+    private EditText passwordEditText;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_remote_db_config);
@@ -56,6 +64,14 @@ public class RemoteDBConfigActivity extends AppCompatActivity {
         dbNameEditText.setText(rdbc.getDefaultDBName());
         dbInstanceEditText.setText(rdbc.getDefaultDBInstance());
 
+        usernameTextView = findViewById(R.id.UsernameTextView);
+        userNameEditText = findViewById(R.id.UsernameEditText);
+
+        passwordTextView = findViewById(R.id.PasswordTextView);
+        passwordEditText = findViewById(R.id.PasswordEditText);
+
+        userNameEditText.setText(rdbc.getDefaultUserName());
+        passwordEditText.setText(rdbc.getDefaultPassword());
 
         saveConfigButton = findViewById(R.id.SaveConfigButton);
         saveConfigButton.setOnClickListener(
@@ -64,6 +80,8 @@ public class RemoteDBConfigActivity extends AppCompatActivity {
                     rdbc.setDbConfigValue(RemoteDBConfigActivity.this, findViewById(R.id.PortEditText), FeedEntry.PORT);
                     rdbc.setDbConfigValue(RemoteDBConfigActivity.this, findViewById(R.id.DBNameEditText), FeedEntry.DB_NAME);
                     rdbc.setDbConfigValue(RemoteDBConfigActivity.this, findViewById(R.id.DBInstanceEditText), FeedEntry.DB_INSTANCE);
+                    rdbc.setDbConfigValue(RemoteDBConfigActivity.this, findViewById(R.id.UsernameEditText), FeedEntry.USER_NAME);
+                    rdbc.setDbConfigValue(RemoteDBConfigActivity.this, findViewById(R.id.PasswordEditText), FeedEntry.PASSWORD);
                 });
 
 

@@ -22,15 +22,19 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
                     FeedEntry.IP_ADDRESS + " TEXT," +
                     FeedEntry.PORT + " TEXT," +
                     FeedEntry.DB_NAME + " TEXT," +
-                    FeedEntry.DB_INSTANCE  + " TEXT)";
+                    FeedEntry.DB_INSTANCE  + " TEXT," +
+                    FeedEntry.USER_NAME + " TEXT," +
+                    FeedEntry.PASSWORD + " TEXT)";
 
     private static final String SQL_POPULATE = "INSERT INTO " +
             FeedEntry.TABLE_NAME + "(" + FeedEntry._ID + ","+
             FeedEntry.IP_ADDRESS + "," +
             FeedEntry.PORT + "," +
             FeedEntry.DB_NAME + "," +
-            FeedEntry.DB_INSTANCE +
-            ") VALUES(1,NULL,NULL,NULL,NULL)";
+            FeedEntry.DB_INSTANCE + "," +
+            FeedEntry.USER_NAME + "," +
+            FeedEntry.PASSWORD +
+            ") VALUES(1,NULL,NULL,NULL,NULL,NULL,NULL)";
 
 
     private static final String SQL_DELETE_ENTRIES =
@@ -43,7 +47,7 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
 
 
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 4;
     public static final String DATABASE_NAME = "DBConfig.db";
 
     public FeedReaderDbHelper(Context context) {
@@ -77,7 +81,9 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
                 FeedEntry.IP_ADDRESS,
                 FeedEntry.PORT,
                 FeedEntry.DB_NAME,
-                FeedEntry.DB_INSTANCE
+                FeedEntry.DB_INSTANCE,
+                FeedEntry.USER_NAME,
+                FeedEntry.PASSWORD
         };
 
         // Filter results WHERE "title" = 'My Title'
@@ -113,6 +119,12 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
             String dbInstance = cursor.getString(
                     cursor.getColumnIndexOrThrow(FeedEntry.DB_INSTANCE));
             result.add(dbInstance);
+            String userName = cursor.getString(
+                    cursor.getColumnIndexOrThrow(FeedEntry.USER_NAME));
+            result.add(userName);
+            String password = cursor.getString(
+                    cursor.getColumnIndexOrThrow(FeedEntry.PASSWORD));
+            result.add(password);
         }
         cursor.close();
         Log.d("DB_TAG", "getFeedEntry: "+ result.toString());
@@ -149,6 +161,8 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
         values.put(FeedEntry.PORT, "null");
         values.put(FeedEntry.DB_NAME, "null");
         values.put(FeedEntry.DB_INSTANCE, "null");
+        values.put(FeedEntry.USER_NAME, "null");
+        values.put(FeedEntry.PASSWORD, "null");
 
 // Which row to update, based on the title
         String selection = FeedEntry._ID + " = ?";
