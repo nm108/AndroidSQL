@@ -11,8 +11,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class DBConfigActivity extends AppCompatActivity {
 
-   private DBConfigHelper frdbh =
-           new DBConfigHelper(DBConfigActivity.this);
+   private DBConfigSQLiteHelper frdbh =
+           new DBConfigSQLiteHelper(DBConfigActivity.this);
     private Button saveConfigButton;
 
     private Button resetToDefaultsButton;

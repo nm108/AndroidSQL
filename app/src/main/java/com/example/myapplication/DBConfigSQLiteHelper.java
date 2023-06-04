@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class DBConfigHelper extends SQLiteOpenHelper {
+public class DBConfigSQLiteHelper extends SQLiteOpenHelper {
 
     private String defaultIpAddress = "192.168.1.103";
     private String defaultPort = "1433";
@@ -43,14 +43,14 @@ public class DBConfigHelper extends SQLiteOpenHelper {
     }
 
     public void setDbConfigValue(Context context, View v, String name) {
-        DBConfigHelper frdbh = new DBConfigHelper(context);
+        DBConfigSQLiteHelper frdbh = new DBConfigSQLiteHelper(context);
         EditText et = (EditText) v;
 
         frdbh.setDBConfigValue(name, et.getText().toString());
     }
 
     public void setDbConfigToDefault(Context context) {
-        DBConfigHelper frdbh = new DBConfigHelper(context);
+        DBConfigSQLiteHelper frdbh = new DBConfigSQLiteHelper(context);
         frdbh.setDBConfigToDefault();
     }
 
@@ -156,7 +156,7 @@ public class DBConfigHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 4;
     public static final String DATABASE_NAME = "DBConfig.db";
 
-    public DBConfigHelper(Context context) {
+    public DBConfigSQLiteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
