@@ -9,10 +9,10 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class RemoteDBConfigActivity extends AppCompatActivity {
+public class DBConfigActivity extends AppCompatActivity {
 
-    private RemoteDBConfig rdbc = new RemoteDBConfig(RemoteDBConfigActivity.this);
-
+   private DBConfigHelper frdbh =
+           new DBConfigHelper(DBConfigActivity.this);
     private Button saveConfigButton;
 
     private Button resetToDefaultsButton;
@@ -45,6 +45,7 @@ public class RemoteDBConfigActivity extends AppCompatActivity {
 
     private EditText passwordEditText;
 
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_remote_db_config);
@@ -59,10 +60,10 @@ public class RemoteDBConfigActivity extends AppCompatActivity {
         dbInstanceTextView = findViewById(R.id.DBInstanceTextView);
         dbInstanceEditText = findViewById(R.id.DBInstanceEditText);
 
-        ipAddressEditText.setText(rdbc.getIpAddress());
-        portEditText.setText(rdbc.getPort());
-        dbNameEditText.setText(rdbc.getDefaultDBName());
-        dbInstanceEditText.setText(rdbc.getDefaultDBInstance());
+        ipAddressEditText.setText(frdbh.getIpAddress());
+        portEditText.setText(frdbh.getPort());
+        dbNameEditText.setText(frdbh.getDefaultDBName());
+        dbInstanceEditText.setText(frdbh.getDefaultDBInstance());
 
         usernameTextView = findViewById(R.id.UsernameTextView);
         userNameEditText = findViewById(R.id.UsernameEditText);
@@ -70,18 +71,21 @@ public class RemoteDBConfigActivity extends AppCompatActivity {
         passwordTextView = findViewById(R.id.PasswordTextView);
         passwordEditText = findViewById(R.id.PasswordEditText);
 
-        userNameEditText.setText(rdbc.getDefaultUserName());
-        passwordEditText.setText(rdbc.getDefaultPassword());
+        userNameEditText.setText(frdbh.getDefaultUserName());
+        passwordEditText.setText(frdbh.getDefaultPassword());
 
         saveConfigButton = findViewById(R.id.SaveConfigButton);
         saveConfigButton.setOnClickListener(
                 (final View v) -> {
-                    rdbc.setDbConfigValue(RemoteDBConfigActivity.this, findViewById(R.id.IPAddressEditText), FeedEntry.IP_ADDRESS);
-                    rdbc.setDbConfigValue(RemoteDBConfigActivity.this, findViewById(R.id.PortEditText), FeedEntry.PORT);
-                    rdbc.setDbConfigValue(RemoteDBConfigActivity.this, findViewById(R.id.DBNameEditText), FeedEntry.DB_NAME);
-                    rdbc.setDbConfigValue(RemoteDBConfigActivity.this, findViewById(R.id.DBInstanceEditText), FeedEntry.DB_INSTANCE);
-                    rdbc.setDbConfigValue(RemoteDBConfigActivity.this, findViewById(R.id.UsernameEditText), FeedEntry.USER_NAME);
-                    rdbc.setDbConfigValue(RemoteDBConfigActivity.this, findViewById(R.id.PasswordEditText), FeedEntry.PASSWORD);
+                    frdbh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.IPAddressEditText), DBConfigEntry.IP_ADDRESS);
+                    frdbh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.PortEditText), DBConfigEntry.PORT);
+                    frdbh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.DBNameEditText), DBConfigEntry.DB_NAME);
+                    frdbh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.DBInstanceEditText), DBConfigEntry.DB_INSTANCE);
+                    frdbh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.UsernameEditText), DBConfigEntry.USER_NAME);
+                    frdbh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.PasswordEditText), DBConfigEntry.PASSWORD);
+                    // restart activity
+                    finish();
+                    startActivity(getIntent());
                 });
 
 
@@ -89,7 +93,7 @@ public class RemoteDBConfigActivity extends AppCompatActivity {
         resetToDefaultsButton = findViewById(R.id.ResetToDefaultsButton);
         resetToDefaultsButton.setOnClickListener(
                 (final View v) -> {
-                    rdbc.setDbConfigToDefault(RemoteDBConfigActivity.this);
+                    frdbh.setDbConfigToDefault(DBConfigActivity.this);
 
                     // restart activity
                     finish();
@@ -104,6 +108,7 @@ public class RemoteDBConfigActivity extends AppCompatActivity {
                     switchActivities();
                 }
         );
+
     }
 
 

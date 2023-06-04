@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         databaseConnectionConfigurationButton = findViewById(R.id.DatabaseConnectionConfigurationButton);
         databaseConnectionConfigurationButton.setOnClickListener(
                 (final View v) -> {
-                    switchActivityTo(RemoteDBConfigActivity.class);
+                    switchActivityTo(DBConfigActivity.class);
                 }
         );
 
