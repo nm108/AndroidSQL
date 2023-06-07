@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class DBConfigActivity extends AppCompatActivity {
 
-   private DBConfigSQLiteHelper frdbh =
+   private DBConfigSQLiteHelper sqlh =
            new DBConfigSQLiteHelper(DBConfigActivity.this);
     private Button saveConfigButton;
 
@@ -60,10 +60,10 @@ public class DBConfigActivity extends AppCompatActivity {
         dbInstanceTextView = findViewById(R.id.DBInstanceTextView);
         dbInstanceEditText = findViewById(R.id.DBInstanceEditText);
 
-        ipAddressEditText.setText(frdbh.getIpAddress());
-        portEditText.setText(frdbh.getPort());
-        dbNameEditText.setText(frdbh.getDefaultDBName());
-        dbInstanceEditText.setText(frdbh.getDefaultDBInstance());
+        ipAddressEditText.setText(sqlh.getIpAddress());
+        portEditText.setText(sqlh.getPort());
+        dbNameEditText.setText(sqlh.getDBName());
+        dbInstanceEditText.setText(sqlh.getDBInstance());
 
         usernameTextView = findViewById(R.id.UsernameTextView);
         userNameEditText = findViewById(R.id.UsernameEditText);
@@ -71,18 +71,18 @@ public class DBConfigActivity extends AppCompatActivity {
         passwordTextView = findViewById(R.id.PasswordTextView);
         passwordEditText = findViewById(R.id.PasswordEditText);
 
-        userNameEditText.setText(frdbh.getDefaultUserName());
-        passwordEditText.setText(frdbh.getDefaultPassword());
+        userNameEditText.setText(sqlh.getUserName());
+        passwordEditText.setText(sqlh.getPassword());
 
         saveConfigButton = findViewById(R.id.SaveConfigButton);
         saveConfigButton.setOnClickListener(
                 (final View v) -> {
-                    frdbh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.IPAddressEditText), DBConfigEntry.IP_ADDRESS);
-                    frdbh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.PortEditText), DBConfigEntry.PORT);
-                    frdbh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.DBNameEditText), DBConfigEntry.DB_NAME);
-                    frdbh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.DBInstanceEditText), DBConfigEntry.DB_INSTANCE);
-                    frdbh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.UsernameEditText), DBConfigEntry.USER_NAME);
-                    frdbh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.PasswordEditText), DBConfigEntry.PASSWORD);
+                    sqlh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.IPAddressEditText), DBConfigEntry.IP_ADDRESS);
+                    sqlh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.PortEditText), DBConfigEntry.PORT);
+                    sqlh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.DBNameEditText), DBConfigEntry.DB_NAME);
+                    sqlh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.DBInstanceEditText), DBConfigEntry.DB_INSTANCE);
+                    sqlh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.UsernameEditText), DBConfigEntry.USER_NAME);
+                    sqlh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.PasswordEditText), DBConfigEntry.PASSWORD);
                     // restart activity
                     finish();
                     startActivity(getIntent());
@@ -93,7 +93,7 @@ public class DBConfigActivity extends AppCompatActivity {
         resetToDefaultsButton = findViewById(R.id.ResetToDefaultsButton);
         resetToDefaultsButton.setOnClickListener(
                 (final View v) -> {
-                    frdbh.setDbConfigToDefault(DBConfigActivity.this);
+                    sqlh.setDbConfigToDefault(DBConfigActivity.this);
 
                     // restart activity
                     finish();

@@ -46,10 +46,6 @@ public class DBConfigSQLiteHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    public void FeedReaderDbHelper(Context context) {
-        this.context = context;
-    }
-
     public String getIpAddress() {
         String result = getDbFieldValue(0);
         // add code that handles configuration written in local SQLite
@@ -62,15 +58,34 @@ public class DBConfigSQLiteHelper extends SQLiteOpenHelper {
     }
 
     public void setDbConfigValue(Context context, View v, String name) {
-        DBConfigSQLiteHelper frdbh = new DBConfigSQLiteHelper(context);
         EditText et = (EditText) v;
-
-        frdbh.setDBConfigValue(name, et.getText().toString());
+        setDBConfigValue(name, et.getText().toString());
     }
 
     public void setDbConfigToDefault(Context context) {
-        DBConfigSQLiteHelper frdbh = new DBConfigSQLiteHelper(context);
-        frdbh.setDBConfigToDefault();
+        SQLiteDatabase db = getWritableDatabase();
+
+// New value for one column
+        ContentValues values = new ContentValues();
+        values.put(DBConfigEntry.IP_ADDRESS, "null");
+        values.put(DBConfigEntry.PORT, "null");
+        values.put(DBConfigEntry.DB_NAME, "null");
+        values.put(DBConfigEntry.DB_INSTANCE, "null");
+        values.put(DBConfigEntry.USER_NAME, "null");
+        values.put(DBConfigEntry.PASSWORD, "null");
+
+// Which row to update, based on the title
+        String selection = DBConfigEntry._ID + " = ?";
+        String[] selectionArgs = { "1" };
+
+        //String selection = null;
+        //String selectionArgs[] = null;
+        int count = db.update(
+                DBConfigEntry.TABLE_NAME,
+                values,
+                selection,
+                selectionArgs);
+
     }
 
     public String getPort() {
@@ -85,7 +100,7 @@ public class DBConfigSQLiteHelper extends SQLiteOpenHelper {
         }
     }
 
-    public String getDefaultDBName() {
+    public String getDBName() {
 
         String result = getDbFieldValue(2);
         // add code that handles configuration written in local SQLite
@@ -97,7 +112,7 @@ public class DBConfigSQLiteHelper extends SQLiteOpenHelper {
         }
     }
 
-    public String getDefaultDBInstance() {
+    public String getDBInstance() {
 
         String result = getDbFieldValue(3);
         // add code that handles configuration written in local SQLite
@@ -113,7 +128,7 @@ public class DBConfigSQLiteHelper extends SQLiteOpenHelper {
     // make the constructor private.
     // private FeedReaderContract() {}
 
-    public String getDefaultUserName() {
+    public String getUserName() {
 
         String result = getDbFieldValue(4);
         // add code that handles configuration written in local SQLite
@@ -125,7 +140,7 @@ public class DBConfigSQLiteHelper extends SQLiteOpenHelper {
         }
     }
 
-    public String getDefaultPassword() {
+    public String getPassword() {
 
         String result = getDbFieldValue(5);
         // add code that handles configuration written in local SQLite
@@ -245,29 +260,7 @@ public class DBConfigSQLiteHelper extends SQLiteOpenHelper {
                 selectionArgs);
     }
 
-    public void setDBConfigToDefault() {
-        SQLiteDatabase db = getWritableDatabase();
 
-// New value for one column
-        ContentValues values = new ContentValues();
-        values.put(DBConfigEntry.IP_ADDRESS, "null");
-        values.put(DBConfigEntry.PORT, "null");
-        values.put(DBConfigEntry.DB_NAME, "null");
-        values.put(DBConfigEntry.DB_INSTANCE, "null");
-        values.put(DBConfigEntry.USER_NAME, "null");
-        values.put(DBConfigEntry.PASSWORD, "null");
 
-// Which row to update, based on the title
-        String selection = DBConfigEntry._ID + " = ?";
-        String[] selectionArgs = { "1" };
-
-        //String selection = null;
-        //String selectionArgs[] = null;
-        int count = db.update(
-                DBConfigEntry.TABLE_NAME,
-                values,
-                selection,
-                selectionArgs);
-    }
 
 }
