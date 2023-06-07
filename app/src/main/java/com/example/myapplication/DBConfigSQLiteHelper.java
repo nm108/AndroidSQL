@@ -15,28 +15,47 @@ import java.util.List;
 
 public class DBConfigSQLiteHelper extends SQLiteOpenHelper {
 
-    private String defaultIpAddress = "192.168.1.103";
-    private String defaultPort = "1433";
-    private String defaultDBName = "DBAW";
-    private String defaultDBInstance = "AWDBINSTANCE";
+    // If you change the database schema, you must increment the database version.
+    public static final int DATABASE_VERSION = 4;
+    public static final String DATABASE_NAME = "DBConfig.db";
+    private static final String SQL_CREATE_ENTRIES =
+            "CREATE TABLE " + DBConfigEntry.TABLE_NAME + " (" +
+                    DBConfigEntry._ID + " INTEGER PRIMARY KEY," +
+                    DBConfigEntry.IP_ADDRESS + " TEXT," +
+                    DBConfigEntry.PORT + " TEXT," +
+                    DBConfigEntry.DB_NAME + " TEXT," +
+                    DBConfigEntry.DB_INSTANCE  + " TEXT," +
+                    DBConfigEntry.USER_NAME + " TEXT," +
+                    DBConfigEntry.PASSWORD + " TEXT)";
+    private static final String SQL_POPULATE = "INSERT INTO " +
+            DBConfigEntry.TABLE_NAME + "(" + DBConfigEntry._ID + ","+
+            DBConfigEntry.IP_ADDRESS + "," +
+            DBConfigEntry.PORT + "," +
+            DBConfigEntry.DB_NAME + "," +
+            DBConfigEntry.DB_INSTANCE + "," +
+            DBConfigEntry.USER_NAME + "," +
+            DBConfigEntry.PASSWORD +
+            ") VALUES(1,NULL,NULL,NULL,NULL,NULL,NULL)";
+    private static final String SQL_DELETE_ENTRIES =
+            "DROP TABLE IF EXISTS " + DBConfigEntry.TABLE_NAME;
 
-    private final String defaultUserName = "?";
-
-    private final String defaultPassword = "?";
-
+    private DefaultDBConfig defaultConfigValues = new DefaultDBConfig();
     private Context context;
+
+    public DBConfigSQLiteHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
 
     public void FeedReaderDbHelper(Context context) {
         this.context = context;
     }
-
 
     public String getIpAddress() {
         String result = getDbFieldValue(0);
         // add code that handles configuration written in local SQLite
         // Android database.
         if (result == null) {
-            return defaultIpAddress;
+            return defaultConfigValues.getDefaultIpAddress();
         } else {
             return result;
         }
@@ -60,7 +79,7 @@ public class DBConfigSQLiteHelper extends SQLiteOpenHelper {
         // add code that handles configuration written in local SQLite
         // Android database.
         if (result == null) {
-            return defaultPort;
+            return defaultConfigValues.getDefaultPort();
         } else {
             return result;
         }
@@ -72,7 +91,7 @@ public class DBConfigSQLiteHelper extends SQLiteOpenHelper {
         // add code that handles configuration written in local SQLite
         // Android database.
         if (result == null) {
-            return defaultDBName;
+            return defaultConfigValues.getDefaultDBName();
         } else {
             return result;
         }
@@ -84,11 +103,15 @@ public class DBConfigSQLiteHelper extends SQLiteOpenHelper {
         // add code that handles configuration written in local SQLite
         // Android database.
         if (result == null) {
-            return defaultDBInstance;
+            return defaultConfigValues.getDefaultDBInstance();
         } else {
             return result;
         }
     }
+
+    // To prevent someone from accidentally instantiating the contract class,
+    // make the constructor private.
+    // private FeedReaderContract() {}
 
     public String getDefaultUserName() {
 
@@ -96,22 +119,24 @@ public class DBConfigSQLiteHelper extends SQLiteOpenHelper {
         // add code that handles configuration written in local SQLite
         // Android database.
         if (result == null) {
-            return defaultUserName;
+            return defaultConfigValues.getDefaultUserName();
         } else {
             return result;
         }
     }
+
     public String getDefaultPassword() {
 
         String result = getDbFieldValue(5);
         // add code that handles configuration written in local SQLite
         // Android database.
         if (result == null) {
-            return defaultPassword;
+            return defaultConfigValues.getDefaultPassword();
         } else {
             return result;
         }
     }
+
     private String getDbFieldValue(int i) {
 
         List entry = getDBConfigArray();
@@ -120,44 +145,6 @@ public class DBConfigSQLiteHelper extends SQLiteOpenHelper {
             result = null;
         }
         return result;
-    }
-
-    private static final String SQL_CREATE_ENTRIES =
-            "CREATE TABLE " + DBConfigEntry.TABLE_NAME + " (" +
-                    DBConfigEntry._ID + " INTEGER PRIMARY KEY," +
-                    DBConfigEntry.IP_ADDRESS + " TEXT," +
-                    DBConfigEntry.PORT + " TEXT," +
-                    DBConfigEntry.DB_NAME + " TEXT," +
-                    DBConfigEntry.DB_INSTANCE  + " TEXT," +
-                    DBConfigEntry.USER_NAME + " TEXT," +
-                    DBConfigEntry.PASSWORD + " TEXT)";
-
-    private static final String SQL_POPULATE = "INSERT INTO " +
-            DBConfigEntry.TABLE_NAME + "(" + DBConfigEntry._ID + ","+
-            DBConfigEntry.IP_ADDRESS + "," +
-            DBConfigEntry.PORT + "," +
-            DBConfigEntry.DB_NAME + "," +
-            DBConfigEntry.DB_INSTANCE + "," +
-            DBConfigEntry.USER_NAME + "," +
-            DBConfigEntry.PASSWORD +
-            ") VALUES(1,NULL,NULL,NULL,NULL,NULL,NULL)";
-
-
-    private static final String SQL_DELETE_ENTRIES =
-            "DROP TABLE IF EXISTS " + DBConfigEntry.TABLE_NAME;
-
-    // To prevent someone from accidentally instantiating the contract class,
-    // make the constructor private.
-    // private FeedReaderContract() {}
-
-
-
-    // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 4;
-    public static final String DATABASE_NAME = "DBConfig.db";
-
-    public DBConfigSQLiteHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     public void onCreate(SQLiteDatabase db) {
