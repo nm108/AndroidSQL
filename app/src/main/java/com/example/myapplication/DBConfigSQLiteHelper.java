@@ -46,17 +46,6 @@ public class DBConfigSQLiteHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    public String getIpAddress() {
-        String result = getDbFieldValue(0);
-        // add code that handles configuration written in local SQLite
-        // Android database.
-        if (result == null) {
-            return defaultConfigValues.getDefaultIpAddress();
-        } else {
-            return result;
-        }
-    }
-
     public void setDbConfigValue(Context context, View v, String name) {
         EditText et = (EditText) v;
         setDBConfigValue(name, et.getText().toString());
@@ -65,7 +54,7 @@ public class DBConfigSQLiteHelper extends SQLiteOpenHelper {
     public void setDbConfigToDefault(Context context) {
         SQLiteDatabase db = getWritableDatabase();
 
-// New value for one column
+        // New value for one column
         ContentValues values = new ContentValues();
         values.put(DBConfigEntry.IP_ADDRESS, "null");
         values.put(DBConfigEntry.PORT, "null");
@@ -74,25 +63,28 @@ public class DBConfigSQLiteHelper extends SQLiteOpenHelper {
         values.put(DBConfigEntry.USER_NAME, "null");
         values.put(DBConfigEntry.PASSWORD, "null");
 
-// Which row to update, based on the title
+        // Which row to update, based on the title
         String selection = DBConfigEntry._ID + " = ?";
         String[] selectionArgs = { "1" };
 
-        //String selection = null;
-        //String selectionArgs[] = null;
         int count = db.update(
                 DBConfigEntry.TABLE_NAME,
                 values,
                 selection,
                 selectionArgs);
+    }
 
+    public String getIpAddress() {
+        String result = getDbFieldValue(0);
+        if (result == null) {
+            return defaultConfigValues.getDefaultIpAddress();
+        } else {
+            return result;
+        }
     }
 
     public String getPort() {
-
         String result = getDbFieldValue(1);
-        // add code that handles configuration written in local SQLite
-        // Android database.
         if (result == null) {
             return defaultConfigValues.getDefaultPort();
         } else {
@@ -101,10 +93,7 @@ public class DBConfigSQLiteHelper extends SQLiteOpenHelper {
     }
 
     public String getDBName() {
-
         String result = getDbFieldValue(2);
-        // add code that handles configuration written in local SQLite
-        // Android database.
         if (result == null) {
             return defaultConfigValues.getDefaultDBName();
         } else {
@@ -113,10 +102,7 @@ public class DBConfigSQLiteHelper extends SQLiteOpenHelper {
     }
 
     public String getDBInstance() {
-
         String result = getDbFieldValue(3);
-        // add code that handles configuration written in local SQLite
-        // Android database.
         if (result == null) {
             return defaultConfigValues.getDefaultDBInstance();
         } else {
@@ -124,15 +110,8 @@ public class DBConfigSQLiteHelper extends SQLiteOpenHelper {
         }
     }
 
-    // To prevent someone from accidentally instantiating the contract class,
-    // make the constructor private.
-    // private FeedReaderContract() {}
-
     public String getUserName() {
-
         String result = getDbFieldValue(4);
-        // add code that handles configuration written in local SQLite
-        // Android database.
         if (result == null) {
             return defaultConfigValues.getDefaultUserName();
         } else {
@@ -141,25 +120,12 @@ public class DBConfigSQLiteHelper extends SQLiteOpenHelper {
     }
 
     public String getPassword() {
-
         String result = getDbFieldValue(5);
-        // add code that handles configuration written in local SQLite
-        // Android database.
         if (result == null) {
             return defaultConfigValues.getDefaultPassword();
         } else {
             return result;
         }
-    }
-
-    private String getDbFieldValue(int i) {
-
-        List entry = getDBConfigArray();
-        String result = (String) entry.get(i);
-        if (result != null && result.equals("null")) {
-            result = null;
-        }
-        return result;
     }
 
     public void onCreate(SQLiteDatabase db) {
@@ -179,11 +145,10 @@ public class DBConfigSQLiteHelper extends SQLiteOpenHelper {
     }
 
     public List getDBConfigArray() {
-
         SQLiteDatabase db = getReadableDatabase();
 
         // Define a projection that specifies which columns from the database
-// you will actually use after this query.
+        // you will actually use after this query.
         String[] projection = {
                 DBConfigEntry._ID,
                 DBConfigEntry.IP_ADDRESS,
@@ -194,14 +159,8 @@ public class DBConfigSQLiteHelper extends SQLiteOpenHelper {
                 DBConfigEntry.PASSWORD
         };
 
-        // Filter results WHERE "title" = 'My Title'
-        String selection = null;
-
-        //FeedEntry.IP_ADDRESS + "," +
-        //        FeedEntry.PORT + "," +
-        //        FeedEntry.DB_NAME + "," +
-        //        FeedEntry.DB_INSTANCE;
-        String[] selectionArgs = null;
+        String selection = DBConfigEntry._ID + " = ?";
+        String[] selectionArgs = { "1" };
 
         Cursor cursor = db.query(
                 DBConfigEntry.TABLE_NAME,   // The table to query
@@ -235,8 +194,7 @@ public class DBConfigSQLiteHelper extends SQLiteOpenHelper {
             result.add(password);
         }
         cursor.close();
-        Log.d("DB_TAG", "getFeedEntry: "+ result.toString());
-
+        // Log.d("DB_TAG", "getFeedEntry: "+ result.toString());
 
         return result;
     }
@@ -244,12 +202,11 @@ public class DBConfigSQLiteHelper extends SQLiteOpenHelper {
     public void setDBConfigValue(String field, String value) {
         SQLiteDatabase db = getWritableDatabase();
 
-
-// New value for one column
+        // New value for one column
         ContentValues values = new ContentValues();
         values.put(field, value);
 
-// Which row to update, based on the title
+        // Which row to update, based on the title
        String selection = DBConfigEntry._ID + " = ?";
        String[] selectionArgs = { "1" };
 
@@ -260,7 +217,12 @@ public class DBConfigSQLiteHelper extends SQLiteOpenHelper {
                 selectionArgs);
     }
 
-
-
-
+    private String getDbFieldValue(int i) {
+        List entry = getDBConfigArray();
+        String result = (String) entry.get(i);
+        if (result != null && result.equals("null")) {
+            result = null;
+        }
+        return result;
+    }
 }

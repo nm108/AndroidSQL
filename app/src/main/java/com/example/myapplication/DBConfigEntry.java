@@ -9,8 +9,6 @@ public class DBConfigEntry implements BaseColumns {
     public static final String PORT = "PORT";
     public static final String DB_NAME = "DB_NAME";
     public static final String DB_INSTANCE = "DB_INSTANCE";
-
     public static final String USER_NAME = "USER_NAME";
-
     public static final String PASSWORD = "PASSWORD";
 }
