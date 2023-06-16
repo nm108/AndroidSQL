@@ -97,6 +97,7 @@ public class QueryForUserDataAsyncTask extends AsyncTask <Void,Void,Void> {
                 AlertDialog.BUTTON_NEUTRAL, (CharSequence) okLabel,
                     (DialogInterface.OnClickListener) (dialog, which) -> {
                         dialog.dismiss(); });
+
         alertDialog.show();
     };
 
