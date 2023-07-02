@@ -28,7 +28,7 @@ public class SelectActivity extends AppCompatActivity {
         doSelectQueryButton.setOnClickListener(
             (final View v) -> {
                 final String userName = userNameEditText.getText().toString().trim();
-                new QueryForUserDataAsyncTask(SelectActivity.this, userName).execute();
+                // new QueryForUserDataAsyncTask(SelectActivity.this, userName).execute();
             }
         );
 
