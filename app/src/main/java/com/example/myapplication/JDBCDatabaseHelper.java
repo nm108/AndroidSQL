@@ -1,13 +1,17 @@
 package com.example.myapplication;
 
+import android.content.Context;
+import android.os.StrictMode;
 import android.util.Log;
 
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -15,28 +19,55 @@ import java.util.List;
  */
 public class JDBCDatabaseHelper {
 
-    private final String ip = "192.168.1.103:1433";
-    private final String driverClass = "net.sourceforge.jtds.jdbc.Driver";
-    private final String dbInstance = "AWDBINSTANCE";
-    private final String db = "DBAW";
-    private final String userName = "aw108";
-    private final String password = "Firewall123";
+    private static final String ip = "192.168.1.103:1433";
+    private static final String driverClass = "net.sourceforge.jtds.jdbc.Driver";
+    private static final String dbInstance = "AWDBINSTANCE";
+    private static final String db = "DBAW";
+    private static final String userName = "aw108";
+    private static final String password = "Firewall";
 
-    private String getConnURL(final String ip, final String dbInstance, final String db) {
-        return "jdbc:jtds:sqlserver://"+ip+";instance="+dbInstance+";Database='"+db+"'";
+    private static final String connURL = "jdbc:jtds:sqlserver://"+ip+";instance="+dbInstance+";Database='"+db+"'";
+
+    private Connection conn = null;
+
+    private Context c;
+
+    public JDBCDatabaseHelper() {
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                .permitAll().build();
+        StrictMode.setThreadPolicy(policy);
     }
 
+    public Context getContext() {
+        return c;
+    }
     private Connection getConnection() {
-        Connection conn = null;
         try {
-            Class.forName(driverClass);
-            conn = DriverManager.getConnection(getConnURL(ip, dbInstance, db), userName, password);
+            Class.forName(driverClass).newInstance();
+
+            conn = DriverManager.getConnection(connURL, userName, password);
+            System.out.println("conn=="+conn);
+
         } catch (SQLException se) {
-            Log.e("Error 1: ", se.getMessage());
+            System.out.println("1conn=="+conn);
+
+            if (se.getMessage() != null) {
+                Log.e("Error 1: ", se.getMessage());
+            }
+
         } catch (ClassNotFoundException e) {
-            Log.e("Error 3: ", e.getMessage());
+            System.out.println("2conn=="+conn);
+            if (e.getMessage() != null) {
+                Log.e("Error 3: ", e.getMessage());
+            }
+
         } catch (Exception e) {
-            Log.e("Error 2: ", e.getMessage());
+            System.out.println("3conn=="+conn);
+            if (e.getMessage() != null) {
+                System.out.println(e);
+
+                Log.e("Error 2: ", e.getMessage());
+            }
         }
 
         return conn;
@@ -44,20 +75,34 @@ public class JDBCDatabaseHelper {
 
     // TODO: this is just prototype, replace it with code that uses database properly.
     // returned value also needs to be modified.
-    private List doSelect() {
-        Connection conn = getConnection();
+    public List doSelect() throws SQLException {
+        ResultSet rs;
         List result = new ArrayList();
-        try {
-            final Statement statement = conn.createStatement();
-            final ResultSet rs = statement.executeQuery("SELECT * From USERS where UserName='"+ userName +"'");
 
-            while (rs.next()) {
-                result.add(rs.getString(0));
-            }
+
+        try {
+            final Connection conn = getConnection();
+            System.out.println("conn="+conn);
+            final Statement statement = conn.createStatement();
+            rs = statement.executeQuery("SELECT * From Users");
+
         } catch (SQLException e) {
-            Log.e("Error 4: ", e.getMessage());
+            throw new RuntimeException(e);
         }
 
-        return result;
+        //
+
+        while (rs.next()) {
+            try {
+                String str = rs.getString(1);
+                result.add(str);
+                System.out.println("STR: "+str);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        //System.out.println("result="+result);
+        return result;// result;
     }
 }

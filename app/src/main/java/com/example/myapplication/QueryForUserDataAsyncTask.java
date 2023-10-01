@@ -1,31 +1,31 @@
-package com.example.myapplication;
-
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.os.AsyncTask;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-
-// TODO: to be removed.
-
-/**
- * Asynchronous task for sending query for user data to database in background.
- * After query execution, message with query results is displayed on Android Device.
- *
- * @author Andrzej Wysocki
-*/
-/*
-public class QueryForUserDataAsyncTask extends AsyncTask <Void,Void,Void> {
-
-//    /* State */
+//package com.example.myapplication;
 //
+//import android.app.AlertDialog;
+//import android.app.ProgressDialog;
+//import android.content.Context;
+//import android.content.DialogInterface;
+//import android.os.AsyncTask;
+//
+//import java.sql.Connection;
+//import java.sql.ResultSet;
+//import java.sql.Statement;
+//
+//// TODO: to be removed.
+//
+///**
+// * Asynchronous task for sending query for user data to database in background.
+// * After query execution, message with query results is displayed on Android Device.
+// *
+// * @author Andrzej Wysocki
+//*/
+//
+//public class QueryForUserDataAsyncTask extends AsyncTask <Void,Void,Void> {
+//
+////    /* State */
+////
 //    private final Context c;
 //    String messageToDisplay;
-//
+////
 //    private final String messageTitleLabel = "Message";
 //    final String userName;
 //    private ProgressDialog progressDialog;
@@ -51,7 +51,8 @@ public class QueryForUserDataAsyncTask extends AsyncTask <Void,Void,Void> {
 //
 //    protected Void doInBackground(Void... voids) {
 //        try {
-//            final Connection conn = DatabaseConnectionProviderSingleton.getConnection();
+//            final JDBCDatabaseHelper jdbchelper = new JDBCDatabaseHelper();
+//            final Connection conn = jdbchelper.getConnection();
 //            final Statement statement = conn.createStatement();
 //            final ResultSet rs = statement.executeQuery("SELECT * From USERS where UserName='"+ userName +"'");
 //            if (rs.next()) {
