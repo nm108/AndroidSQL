@@ -75,7 +75,7 @@ public class JDBCDatabaseHelper {
 
     // TODO: this is just prototype, replace it with code that uses database properly.
     // returned value also needs to be modified.
-    public List doSelect() throws SQLException {
+    public List doSelect(String QueryStr) throws SQLException {
         ResultSet rs;
         List result = new ArrayList();
 
@@ -84,7 +84,7 @@ public class JDBCDatabaseHelper {
             final Connection conn = getConnection();
             System.out.println("conn="+conn);
             final Statement statement = conn.createStatement();
-            rs = statement.executeQuery("SELECT * From Users");
+            rs = statement.executeQuery("SELECT * From Products WHERE ProductName LIKE '%" + QueryStr + "%'");
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -94,8 +94,8 @@ public class JDBCDatabaseHelper {
 
         while (rs.next()) {
             try {
-                String str = rs.getString(1);
-                Integer intc = (Integer) rs.getInt(2);
+                String str = rs.getString(2);
+                Integer intc = (Integer) rs.getInt(3);
                 result.add(str+": "+intc);
             } catch (Exception e) {
                 throw new RuntimeException(e);

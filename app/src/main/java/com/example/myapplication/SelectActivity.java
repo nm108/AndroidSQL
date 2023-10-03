@@ -51,40 +51,17 @@ public class SelectActivity extends AppCompatActivity {
         doSelectQueryButton.setOnClickListener(
             (final View v) -> {
                 JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper();
-                 List selectList = null;
+                List selectList = null;
+
                 try {
-                    selectList = jdbcDatabaseHelper.doSelect();
+                    selectList = jdbcDatabaseHelper.doSelect(userNameEditText.getText().toString());
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
 //                String listString = String.join(", ", selectList);
 
-//                ArrayList arrList = new ArrayList();
-//                arrList.add("aaaaa");
-//                arrList.add("bbb");
-//                arrList.add(123);arrList.add("aaaaa");
-//                arrList.add("bbb");
-//                arrList.add(123);arrList.add("aaaaa");
-//                arrList.add("bbb");
-//                arrList.add(123);arrList.add("aaaaa");
-//                arrList.add("bbb");
-//                arrList.add(123);arrList.add("aaaaa");
-//                arrList.add("bbb");
-//                arrList.add(123);arrList.add("aaaaa");
-//                arrList.add("bbb");
-//                arrList.add(123);
-
-
                 ArrayAdapter aa = new ArrayAdapter(this, R.layout.simple_list_item, selectList);
-
-//
-//                System.out.println("sl="+selectList);
                 lv.setAdapter(aa);
-//
-// //               mListView.setAdapter(mAdapter);
-//
-////                lv.set
-//                userNameEditText.setText(listString);
             }
         );
 
