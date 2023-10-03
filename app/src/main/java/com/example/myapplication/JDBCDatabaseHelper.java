@@ -95,8 +95,8 @@ public class JDBCDatabaseHelper {
         while (rs.next()) {
             try {
                 String str = rs.getString(1);
-                result.add(str);
-                System.out.println("STR: "+str);
+                Integer intc = (Integer) rs.getInt(2);
+                result.add(str+": "+intc);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
