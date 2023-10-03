@@ -94,9 +94,10 @@ public class JDBCDatabaseHelper {
 
         while (rs.next()) {
             try {
-                String str = rs.getString(2);
-                Integer intc = (Integer) rs.getInt(3);
-                Product product = new Product(str, intc);
+                String id = rs.getString(1);
+                String name = rs.getString(2);
+                Integer amount = (Integer) rs.getInt(3);
+                Product product = new Product(id, name, amount);
 //                result.add(str);
                 result.add(product);
 //                System.out.println("prod="+product.toString());

@@ -25,9 +25,11 @@ public class ProductAdapter extends ArrayAdapter<Product> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.simple_list_item, parent, false);
         }
         // Lookup view for data population
+        TextView tv_0 = convertView.findViewById(R.id.tv_0);
         TextView tv_1 = convertView.findViewById(R.id.tv_1);
         TextView tv_2 = convertView.findViewById(R.id.tv_2);
         // Populate the data into the template view using the data object
+        tv_0.setText(product.id);
         tv_1.setText(product.name);
         tv_2.setText(product.amount.toString());
         // Return the completed view to render on screen
