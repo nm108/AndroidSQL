@@ -75,9 +75,9 @@ public class JDBCDatabaseHelper {
 
     // TODO: this is just prototype, replace it with code that uses database properly.
     // returned value also needs to be modified.
-    public List doSelect(String QueryStr) throws SQLException {
+    public ArrayList doSelect(String QueryStr) throws SQLException {
         ResultSet rs;
-        List result = new ArrayList();
+        ArrayList result = new ArrayList();
 
 
         try {
@@ -96,7 +96,11 @@ public class JDBCDatabaseHelper {
             try {
                 String str = rs.getString(2);
                 Integer intc = (Integer) rs.getInt(3);
-                result.add(str+": "+intc);
+                Product product = new Product(str, intc);
+//                result.add(str);
+                result.add(product);
+//                System.out.println("prod="+product.toString());
+//                result.add(str+":"+intc);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

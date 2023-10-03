@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -49,20 +50,7 @@ public class SelectActivity extends AppCompatActivity {
         returnButton = findViewById(R.id.ReturnButton);
 
         doSelectQueryButton.setOnClickListener(
-            (final View v) -> {
-                JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper();
-                List selectList = null;
-
-                try {
-                    selectList = jdbcDatabaseHelper.doSelect(userNameEditText.getText().toString());
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-//                String listString = String.join(", ", selectList);
-
-                ArrayAdapter aa = new ArrayAdapter(this, R.layout.simple_list_item, selectList);
-                lv.setAdapter(aa);
-            }
+                this::onClick
         );
 
         returnButton.setOnClickListener(
@@ -79,5 +67,26 @@ public class SelectActivity extends AppCompatActivity {
     private void switchActivities() {
         Intent switchActivityIntent = new Intent(this, MainActivity.class);
         startActivity(switchActivityIntent);
+    }
+
+    private void onClick(View v) {
+        JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper();
+        ArrayList selectList = null;
+
+        try {
+            selectList = (ArrayList) jdbcDatabaseHelper.doSelect(userNameEditText.getText().toString());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+//                String listString = String.join(", ", selectList);
+        ProductAdapter adapter = new ProductAdapter(this, selectList);
+
+// Attach the adapter to a ListView
+
+  lv.setAdapter(adapter);
+
+
+//        ArrayAdapter aa = new ArrayAdapter(this, R.layout.simple_list_item, selectList);
+//        lv.setAdapter(aa);
     }
 }
