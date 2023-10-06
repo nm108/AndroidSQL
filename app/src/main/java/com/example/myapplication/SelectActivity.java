@@ -1,26 +1,20 @@
 package com.example.myapplication;
 
-import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
+import android.widget.AdapterView.*;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import com.example.myapplication.R;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -36,6 +30,7 @@ public class SelectActivity extends AppCompatActivity {
 
     private String userName = "aw108";
 
+    private AlertDialog ad;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,15 +73,40 @@ public class SelectActivity extends AppCompatActivity {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-//                String listString = String.join(", ", selectList);
+
+        ad = new AlertDialog.Builder( this ).create();
+        ad.setTitle("title");
+        ad.setMessage("valueToDisplay: value");
+        ad.setButton(
+                AlertDialog.BUTTON_NEUTRAL, (CharSequence) "okLabel",
+                (DialogInterface.OnClickListener) (dialog, which) -> {
+                    dialog.dismiss();
+                });
+
+
+
+
+
         ProductAdapter adapter = new ProductAdapter(this, selectList);
 
-// Attach the adapter to a ListView
+      lv.setOnItemClickListener(new OnItemClickListener() {
 
-  lv.setAdapter(adapter);
+                                    public void onItemClick(AdapterView<?> parent, View v, int position,
+                                                            long id) {
+                                        Product p = (Product) parent.getItemAtPosition(position);
+                                        String val = p.id;
+//                                           assuming string and if you want to get the value on click of list item
+//                                           do what you intend to do on click of listview row
+
+                                        ad.setMessage("id: "+val);
+ad.show();
+//                                        System.out.println("id: "+id);
+
+                                    }
+                                });
+        lv.setAdapter(adapter);
 
 
-//        ArrayAdapter aa = new ArrayAdapter(this, R.layout.simple_list_item, selectList);
-//        lv.setAdapter(aa);
+
     }
 }
