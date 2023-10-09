@@ -6,19 +6,42 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-    <Button android:id="@+id/ReturnButton"
+    <Button android:id="@+id/DeleteReturnButton"
         android:layout_marginLeft="100dp"
-        android:layout_marginTop="400dp"
+        android:layout_marginTop="700dp"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:text="Return"></Button>
 
-    <Button android:id="@+id/DeleteQueryButton"
-        android:layout_marginLeft="100dp"
-        android:layout_marginTop="200dp"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:text="Delete"></Button>
+        <EditText
+            android:id="@+id/DeleteQueryEditText"
+            android:layout_width="300dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="100dp"
+            android:layout_marginLeft="50dp"
+            android:hint="Enter product name here (or part of it's name):"
+            android:text="">
+
+        </EditText>
+
+
+        <ListView
+            android:id="@+id/DeleteLV"
+            android:layout_width="300dp"
+            android:layout_height="400dp"
+
+
+            android:layout_marginTop="200dp"
+            android:layout_marginLeft="50dp"
+            ></ListView>
+
+        <Button
+            android:id="@+id/DeleteDoSelectQueryButton"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_margin="50dp"
+            android:text="Query Database for Product"></Button>
+
 
 
 

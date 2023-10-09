@@ -78,14 +78,15 @@ public class SelectActivity extends AppCompatActivity {
         ad.setTitle("title");
         ad.setMessage("valueToDisplay: value");
         ad.setButton(
-                AlertDialog.BUTTON_NEUTRAL, (CharSequence) "okLabel",
+                AlertDialog.BUTTON_POSITIVE, (CharSequence) "Ok",
                 (DialogInterface.OnClickListener) (dialog, which) -> {
                     dialog.dismiss();
                 });
-
-
-
-
+        ad.setButton(
+                AlertDialog.BUTTON_NEGATIVE, "Cancel",
+                (DialogInterface.OnClickListener) (dialog, which) -> {
+                    dialog.dismiss();
+                });
 
         ProductAdapter adapter = new ProductAdapter(this, selectList);
 
@@ -95,18 +96,12 @@ public class SelectActivity extends AppCompatActivity {
                                                             long id) {
                                         Product p = (Product) parent.getItemAtPosition(position);
                                         String val = p.id;
-//                                           assuming string and if you want to get the value on click of list item
-//                                           do what you intend to do on click of listview row
-
                                         ad.setMessage("id: "+val);
-ad.show();
-//                                        System.out.println("id: "+id);
+                                        ad.show();
+
 
                                     }
                                 });
         lv.setAdapter(adapter);
-
-
-
     }
 }

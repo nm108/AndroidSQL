@@ -7,6 +7,7 @@ import android.util.Log;
 import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -36,6 +37,7 @@ public class JDBCDatabaseHelper {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
                 .permitAll().build();
         StrictMode.setThreadPolicy(policy);
+
     }
 
     public Context getContext() {
@@ -73,6 +75,16 @@ public class JDBCDatabaseHelper {
         return conn;
     }
 
+
+    public void doDelete(String id) throws SQLException {
+
+            conn = getConnection();
+            PreparedStatement statement = conn.prepareStatement("DELETE FROM Products WHERE id='"+id+"';");
+            statement.executeUpdate();
+//conn.commit();
+conn.close();
+conn = null;
+    }
     // TODO: this is just prototype, replace it with code that uses database properly.
     // returned value also needs to be modified.
     public ArrayList doSelect(String QueryStr) throws SQLException {
@@ -80,15 +92,11 @@ public class JDBCDatabaseHelper {
         ArrayList result = new ArrayList();
 
 
-        try {
-            final Connection conn = getConnection();
-            System.out.println("conn="+conn);
+
+            conn = getConnection();
             final Statement statement = conn.createStatement();
             rs = statement.executeQuery("SELECT * From Products WHERE ProductName LIKE '%" + QueryStr + "%'");
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
 
         //
 
@@ -108,6 +116,8 @@ public class JDBCDatabaseHelper {
         }
 
         //System.out.println("result="+result);
+        conn.close();
+        conn = null;
         return result;// result;
     }
 }
