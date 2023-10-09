@@ -85,6 +85,25 @@ public class JDBCDatabaseHelper {
 conn.close();
 conn = null;
     }
+
+    public void doInsert(String productName, int productAmount) {
+        conn = getConnection();
+        try {
+            PreparedStatement statement = conn.prepareStatement(
+                    "INSERT INTO Products (ProductName, ProductQuantity)" +
+                            " VALUES('"+productName+"',"+productAmount+")");
+
+
+            statement.executeUpdate();
+            conn.close();
+            conn = null;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
     // TODO: this is just prototype, replace it with code that uses database properly.
     // returned value also needs to be modified.
     public ArrayList doSelect(String QueryStr) throws SQLException {
