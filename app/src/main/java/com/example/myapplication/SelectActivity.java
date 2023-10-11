@@ -1,7 +1,10 @@
 package com.example.myapplication;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -15,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -23,16 +27,26 @@ import java.util.ArrayList;
 public class SelectActivity extends AppCompatActivity {
     private Button doSelectQueryButton;
     private EditText userNameEditText;
-
+    private ProgressDialog progressDialog;
     private ListView lv;
 
     private Button returnButton;
 
     private String userName = "aw108";
 
+    ArrayList<Product> selectList;
+
     private AlertDialog ad;
 
+    private boolean busy = false;
+
+    private Context c;
+    private View v;
+    QueryForUserDataAsyncTask at;
+
     protected void onCreate(Bundle savedInstanceState) {
+        c = this;
+//        progressDialog = new ProgressDialog(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select);
 
@@ -47,6 +61,8 @@ public class SelectActivity extends AppCompatActivity {
         doSelectQueryButton.setOnClickListener(
                 this::onClick
         );
+
+//        doSelectQueryButton.setClickable(true);
 
         returnButton.setOnClickListener(
                 (final View v) -> {
@@ -64,44 +80,131 @@ public class SelectActivity extends AppCompatActivity {
         startActivity(switchActivityIntent);
     }
 
-    private void onClick(View v) {
-        JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper();
-        ArrayList selectList = null;
-
-        try {
-            selectList = (ArrayList) jdbcDatabaseHelper.doSelect(userNameEditText.getText().toString());
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        ad = new AlertDialog.Builder( this ).create();
-        ad.setTitle("title");
-        ad.setMessage("valueToDisplay: value");
-        ad.setButton(
-                AlertDialog.BUTTON_POSITIVE, (CharSequence) "Ok",
-                (DialogInterface.OnClickListener) (dialog, which) -> {
-                    dialog.dismiss();
-                });
-        ad.setButton(
-                AlertDialog.BUTTON_NEGATIVE, "Cancel",
-                (DialogInterface.OnClickListener) (dialog, which) -> {
-                    dialog.dismiss();
-                });
-
-        ProductAdapter adapter = new ProductAdapter(this, selectList);
-
-      lv.setOnItemClickListener(new OnItemClickListener() {
-
-                                    public void onItemClick(AdapterView<?> parent, View v, int position,
-                                                            long id) {
-                                        Product p = (Product) parent.getItemAtPosition(position);
-                                        String val = p.id;
-                                        ad.setMessage("id: "+val);
-                                        ad.show();
-
-
-                                    }
-                                });
-        lv.setAdapter(adapter);
+    public Button getDoSelectQueryButton() {
+        return getDoSelectQueryButton();
     }
-}
+
+    public void onClick(View v) {
+            if (busy) return;
+            busy = true;
+////        Thread t = new ThreadQuerySQL();
+////        t.run();
+//
+            SQLTask sTask = new SQLTask();
+            Integer[] sarr = new Integer[] {};
+            ArrayList<Product> data = new ArrayList<Product>();
+                try {
+                    sTask.execute(sarr);
+                    // Wait for this worker thread’s notification
+//                    sTask.wait();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+
+
+            }
+
+
+//        at = new QueryForUserDataAsyncTask(this, userNameEditText.getText().toString(), this);
+//
+//at.execute();
+
+//        JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper();
+//        try {
+//            selectList = (ArrayList) jdbcDatabaseHelper.doSelect(userNameEditText.getText().toString());
+//            ProductAdapter pa = new ProductAdapter(c, selectList);
+//                    lv.setAdapter(pa);
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//        busy=false;
+
+//        ad = new AlertDialog.Builder(this).create();
+//        ad.setTitle("Selected Product");
+//        ad.setButton(
+//                AlertDialog.BUTTON_NEUTRAL, (CharSequence) "Ok",
+//                (DialogInterface.OnClickListener) (dialog, which) -> {
+//                    dialog.dismiss();
+//                });
+
+
+//      lv.setOnItemClickListener(new OnItemClickListener() {
+//
+//                                    public void onItemClick(AdapterView<?> parent, View v, int position,
+//                                                            long id) {
+//
+//
+//                                        Product p = (Product) parent.getItemAtPosition(position);
+//                                        String val = p.id;
+//                                        ad.setMessage("Selected Product's id: "+val);
+//                                        ad.show();
+//
+//
+//                                    }
+//                                });
+//        ProductAdapter adapter = new ProductAdapter(this, selectList);
+//        lv.setAdapter(adapter);
+//        doSelectQueryButton.setClickable(true);
+
+
+//    public void onQueryEnd(ArrayList<Product> arrp) {
+//        doSelectQueryButton.setClickable(true);
+////        ProductAdapter adapter = new ProductAdapter(this, arrp);
+////        lv.setAdapter(adapter);
+//
+//    }
+
+
+        //        ArrayList<Product> result;
+////            progressDialog.show();
+////            doSelectQueryButton.setClickable(false);
+//        synchronized (this) {
+//
+//            JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper();
+//            try {
+//                result = jdbcDatabaseHelper.doSelect(userNameEditText.getText().toString());
+//            } catch (SQLException e) {
+//                throw new RuntimeException(e);
+//            }
+//            notify();
+//        }
+//        return result;
+
+
+
+        class SQLTask extends AsyncTask<Integer[], Integer, ArrayList<Product>> {
+
+            public ArrayList<Product> doInBackground(Integer[]... params) {
+                ArrayList<Product> result;
+//            progressDialog.show();
+//                doSelectQueryButton.setClickable(false);
+//                synchronized (this) {
+
+                    JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper();
+                    try {
+                        result = jdbcDatabaseHelper.doSelect(userNameEditText.getText().toString());
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+//                    notify();
+//                }
+                return result;
+            }
+
+            @Override
+            protected void onPostExecute(ArrayList<Product> products) {
+                super.onPostExecute(products);
+                ProductAdapter pa = new ProductAdapter(c, products);
+                lv.setAdapter(pa);
+                busy = false;
+//            progressDialog.dismiss();
+//                doSelectQueryButton.setClickable(true);
+
+
+            }
+
+        }
+    }
+
+
+

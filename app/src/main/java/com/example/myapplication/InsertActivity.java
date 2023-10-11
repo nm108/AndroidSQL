@@ -59,13 +59,17 @@ private void switchActivities() {
 private void onClick(View v) {
 
     doInsertQueryButton.setVisibility(View.GONE);
+    try {
         doInsert();
-        switchActivities();
+    } catch (SQLException e) {
+        throw new RuntimeException(e);
+    }
+    switchActivities();
     }
 
 
 
-private void doInsert() {
+private void doInsert() throws SQLException {
     String productName = productNameEditText.getText().toString();
 
     if (productName == null || productName.equals("")) {

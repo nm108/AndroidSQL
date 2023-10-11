@@ -63,6 +63,7 @@ private EditText deleteQueryEditText;
     }
 
     private void onClick(View v) {
+        doQueryButton.setVisibility(View.GONE);
 
 populateLV();
         dad = new AlertDialog.Builder( this ).create();
@@ -88,6 +89,7 @@ populateLV();
     }
 
     void populateLV() {
+
         JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper();
         ArrayList selectList = null;
 
@@ -106,13 +108,15 @@ populateLV();
                                     long id) {
                 Product p = (Product) parent.getItemAtPosition(position);
                 productIdToDelete = p.id;
-                dad.setMessage("Product ID to delete"+productIdToDelete);
+                dad.setMessage("Product Name: "+p.name+"\nProduct Quantity: "+p.amount);
                 dad.show();
 
 
             }
         });
         lv.setAdapter(adapter);
+        doQueryButton.setVisibility(View.VISIBLE);
+
     }
 }
 

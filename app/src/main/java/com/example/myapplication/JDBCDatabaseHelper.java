@@ -43,7 +43,11 @@ public class JDBCDatabaseHelper {
     public Context getContext() {
         return c;
     }
-    private Connection getConnection() {
+    public Connection getConnection() throws SQLException {
+        if ((conn != null) && (!conn.isClosed())) { return conn; };
+
+
+
         try {
             Class.forName(driverClass).newInstance();
 
@@ -86,7 +90,7 @@ conn.close();
 conn = null;
     }
 
-    public void doInsert(String productName, int productAmount) {
+    public void doInsert(String productName, int productAmount) throws SQLException {
         conn = getConnection();
         try {
             PreparedStatement statement = conn.prepareStatement(
@@ -135,8 +139,8 @@ conn = null;
         }
 
         //System.out.println("result="+result);
-        conn.close();
-        conn = null;
+//        conn.close();
+//        conn = null;
         return result;// result;
     }
 }
