@@ -38,6 +38,8 @@ public class SelectActivity extends AppCompatActivity {
 
     private AlertDialog ad;
 
+    private ProgressDialog pd;
+
     private boolean busy = false;
 
     private Context c;
@@ -46,7 +48,9 @@ public class SelectActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         c = this;
-//        progressDialog = new ProgressDialog(this);
+ pd = new ProgressDialog(this);
+ pd.setCancelable(false);
+ pd.setCanceledOnTouchOutside(false);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select);
 
@@ -87,6 +91,7 @@ public class SelectActivity extends AppCompatActivity {
     public void onClick(View v) {
             if (busy) return;
             busy = true;
+            pd.show();
 ////        Thread t = new ThreadQuerySQL();
 ////        t.run();
 //
@@ -197,6 +202,7 @@ public class SelectActivity extends AppCompatActivity {
                 ProductAdapter pa = new ProductAdapter(c, products);
                 lv.setAdapter(pa);
                 busy = false;
+                pd.dismiss();
 //            progressDialog.dismiss();
 //                doSelectQueryButton.setClickable(true);
 
