@@ -20,12 +20,12 @@ import java.util.List;
  */
 public class JDBCDatabaseHelper {
 
-    private static final String ip = "192.168.1.103:1433";
+    private static final String ip = "sql.bsite.net";
     private static final String driverClass = "net.sourceforge.jtds.jdbc.Driver";
-    private static final String dbInstance = "AWDBINSTANCE";
+    private static final String dbInstance = "MSSQL2016";
     private static final String db = "DBAW";
-    private static final String userName = "aw108";
-    private static final String password = "Firewall";
+    private static final String userName = "nm108_awdb";
+    private static final String password = "Firewall123";
 
     private static final String connURL = "jdbc:jtds:sqlserver://"+ip+";instance="+dbInstance+";Database='"+db+"'";
 
