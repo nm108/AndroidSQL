@@ -108,6 +108,8 @@ public class SelectActivity extends AppCompatActivity {
         }
         ad = new AlertDialog.Builder(this).create();
         ad.setTitle("Selected Product");
+        ad.setCancelable(false);
+        ad.setCanceledOnTouchOutside(false);
         ad.setButton(
                 AlertDialog.BUTTON_NEUTRAL, (CharSequence) "Ok",
                 (DialogInterface.OnClickListener) (dialog, which) ->

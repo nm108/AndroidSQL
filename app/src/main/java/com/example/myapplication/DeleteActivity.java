@@ -95,6 +95,8 @@ private EditText deleteQueryEditText;
 populateLV();
         dad = new AlertDialog.Builder( this ).create();
         dad.setTitle("Do you want to Delete a Product?");
+        dad.setCancelable(false);
+        dad.setCanceledOnTouchOutside(false);
         dad.setButton(
                 AlertDialog.BUTTON_POSITIVE, (CharSequence) "Delete",
                 (DialogInterface.OnClickListener) (dialog, which) -> {

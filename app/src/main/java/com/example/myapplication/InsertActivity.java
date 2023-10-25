@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,6 +25,14 @@ public class InsertActivity extends AppCompatActivity{
 
     private TextView itv;
 
+    private ProgressDialog pd;
+
+
+    private AlertDialog ad;
+
+
+    private boolean busy = false;
+
 
 private EditText productNameEditText;
 
@@ -31,6 +40,12 @@ private EditText productAmountEditText;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        pd = new ProgressDialog(this);
+        pd.setCancelable(false);
+        pd.setCanceledOnTouchOutside(false);
+        pd.setMessage("Please Wait.");
+
         setContentView(R.layout.activity_insert);
         productNameEditText = findViewById(R.id.InsertProductNameEditText);
         productAmountEditText = findViewById(R.id.InsertProductAmountEditText);
@@ -45,6 +60,18 @@ private EditText productAmountEditText;
 
         );
 
+        ad = new AlertDialog.Builder(this).create();
+        ad.setTitle("Product Inserted");
+        ad.setCancelable(false);
+        ad.setCanceledOnTouchOutside(false);
+        ad.setButton(
+                AlertDialog.BUTTON_NEUTRAL, (CharSequence) "Ok",
+                (DialogInterface.OnClickListener) (dialog, which) ->
+
+                {
+                    dialog.dismiss();
+                    switchActivities();
+                });
     }
 
 
@@ -57,19 +84,22 @@ private void switchActivities() {
     }
 
 private void onClick(View v) {
-
+    if (busy) return;
+    busy = true;
     doInsertQueryButton.setVisibility(View.GONE);
     try {
+        pd.show();
         doInsert();
     } catch (SQLException e) {
         throw new RuntimeException(e);
     }
-    switchActivities();
+    // switchActivities();
     }
 
 
 
 private void doInsert() throws SQLException {
+
     String productName = productNameEditText.getText().toString();
 
     if (productName == null || productName.equals("")) {
@@ -87,6 +117,9 @@ private void doInsert() throws SQLException {
 
     JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper();
     jdbcDatabaseHelper.doInsert(productName, pamount);
+    doInsertQueryButton.setVisibility(View.VISIBLE);
 
+    pd.dismiss();
+    ad.show();
 }
 };
