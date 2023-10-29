@@ -121,10 +121,9 @@ private void onClick(View v) {
             JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper();
             try {
                 jdbcDatabaseHelper.doInsert(productName, pamount);
-            } catch (SQLException se) {
-                throw new RuntimeException(se);
+            } catch (Exception e) {
+                ad.setMessage("Exception: "+e);
             }
-            doInsertQueryButton.setVisibility(View.VISIBLE);
             return null;
         }
 

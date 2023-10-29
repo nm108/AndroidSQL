@@ -30,13 +30,15 @@ public class DeleteActivity extends AppCompatActivity {
 
     private AlertDialog dad;
 
+    private AlertDialog exceptionAd;
+
 
     private Context c;
 
 
     private ProgressDialog pd;
 
-
+private boolean error = false;
     private boolean busy = false;
 
 private EditText deleteQueryEditText;
@@ -81,6 +83,18 @@ private EditText deleteQueryEditText;
 
         );
 
+        exceptionAd = new AlertDialog.Builder(this).create();
+        exceptionAd.setTitle("Exception Occured");
+        exceptionAd.setCancelable(false);
+        exceptionAd.setCanceledOnTouchOutside(false);
+        exceptionAd.setMessage("Exception: ");
+        exceptionAd.setButton(
+                AlertDialog.BUTTON_NEUTRAL, (CharSequence)  "Ok",
+                (DialogInterface.OnClickListener) (dialog, which) -> {
+                    dialog.dismiss();
+                }
+        );
+
 
     }
 
@@ -93,6 +107,9 @@ private EditText deleteQueryEditText;
     private void onClick(View v) {
 
 populateLV();
+
+
+
         dad = new AlertDialog.Builder( this ).create();
         dad.setTitle("Do you want to Delete a Product?");
         dad.setCancelable(false);
@@ -104,9 +121,12 @@ populateLV();
                         new JDBCDatabaseHelper().doDelete(productIdToDelete);
                         populateLV();
                         dialog.dismiss();
-                    } catch (SQLException e) {
-                        throw new RuntimeException(e);
+                    } catch (Exception e) {
+                        dialog.dismiss();
+                        exceptionAd.setMessage("Exception: "+e);
+                        exceptionAd.show();
                     }
+
                 });
         dad.setButton(
                 AlertDialog.BUTTON_NEGATIVE, "Cancel",
@@ -125,40 +145,20 @@ populateLV();
         DeleteActivity.SQLTask sTask = new DeleteActivity.SQLTask();
         Integer[] sarr = new Integer[]{};
         ArrayList<Product> data = new ArrayList<Product>();
+
+
+
         try {
+
             sTask.execute(sarr);
-            // Wait for this worker thread’s notification
-//                    sTask.wait();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            exceptionAd.setMessage("Exception: "+e);
+            exceptionAd.show();
+            return;
         }
 
         JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper();
-        ArrayList selectList = null;
 
-        try {
-            selectList = (ArrayList) jdbcDatabaseHelper.doSelect(deleteQueryEditText.getText().toString());
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-
-        ProductAdapter adapter = new ProductAdapter(this, selectList);
-
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            public void onItemClick(AdapterView<?> parent, View v, int position,
-                                    long id) {
-                Product p = (Product) parent.getItemAtPosition(position);
-                productIdToDelete = p.id;
-                dad.setMessage("Product Name: "+p.name+"\nProduct Quantity: "+p.amount);
-                dad.show();
-
-
-            }
-        });
-        lv.setAdapter(adapter);
-        doQueryButton.setVisibility(View.VISIBLE);
 
 
 
@@ -177,13 +177,16 @@ populateLV();
     class SQLTask extends AsyncTask<Integer[], Integer, ArrayList<Product>> {
 
         public ArrayList<Product> doInBackground(Integer[]... params) {
-            ArrayList<Product> result;
+            ArrayList<Product> result = null;
 
             JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper();
             try {
                 result = jdbcDatabaseHelper.doSelect(deleteQueryEditText.getText().toString());
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+
+            } catch (Exception e) {
+                error = true;
+                exceptionAd.setMessage("Exception: "+e);
+
             }
             return result;
         }
@@ -191,10 +194,37 @@ populateLV();
         @Override
         protected void onPostExecute(ArrayList<Product> products) {
             super.onPostExecute(products);
+            if (error) {
+                exceptionAd.show();
+                error = false;
+                pd.dismiss();
+                doQueryButton.setVisibility(View.VISIBLE);
+                busy = false;
+                return;
+            }
             ProductAdapter pa = new ProductAdapter(c, products);
             lv.setAdapter(pa);
             busy = false;
             pd.dismiss();
+
+
+            ProductAdapter adapter = new ProductAdapter(c, products);
+
+            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                public void onItemClick(AdapterView<?> parent, View v, int position,
+                                        long id) {
+                    Product p = (Product) parent.getItemAtPosition(position);
+                    productIdToDelete = p.id;
+                    dad.setMessage("Product Name: "+p.name+"\nProduct Quantity: "+p.amount);
+                    dad.show();
+
+
+                }
+            });
+            lv.setAdapter(adapter);
+            doQueryButton.setVisibility(View.VISIBLE);
+
         }
 
     }

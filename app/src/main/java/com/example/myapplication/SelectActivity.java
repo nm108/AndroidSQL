@@ -34,6 +34,8 @@ public class SelectActivity extends AppCompatActivity {
 
     private String userName = "aw108";
 
+    private String exceptionMessageString = "";
+
     ArrayList<Product> selectList;
 
     private AlertDialog ad;
@@ -75,6 +77,19 @@ public class SelectActivity extends AppCompatActivity {
                 }
 
         );
+
+        ad = new AlertDialog.Builder(this).create();
+        ad.setTitle("Product Inserted");
+        ad.setCancelable(false);
+        ad.setCanceledOnTouchOutside(false);
+        ad.setButton(
+                AlertDialog.BUTTON_NEUTRAL, (CharSequence) "Ok",
+                (DialogInterface.OnClickListener) (dialog, which) ->
+
+                {
+                    dialog.dismiss();
+                    switchActivities();
+                });
 
 
     }
@@ -141,13 +156,14 @@ public class SelectActivity extends AppCompatActivity {
     class SQLTask extends AsyncTask<Integer[], Integer, ArrayList<Product>> {
 
         public ArrayList<Product> doInBackground(Integer[]... params) {
-            ArrayList<Product> result;
+            ArrayList<Product> result = null;
 
             JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper();
             try {
                 result = jdbcDatabaseHelper.doSelect(userNameEditText.getText().toString());
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+            } catch (Exception e) {
+                exceptionMessageString = e.toString();
+                return null;
             }
             return result;
         }
@@ -155,10 +171,20 @@ public class SelectActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(ArrayList<Product> products) {
             super.onPostExecute(products);
+            if (products == null) {
+                ad.setMessage("Exception: "+exceptionMessageString);
+                ad.show();
+                busy = false;
+                pd.dismiss();
+                return;
+            }
+
             ProductAdapter pa = new ProductAdapter(c, products);
             lv.setAdapter(pa);
+
             busy = false;
             pd.dismiss();
+
         }
 
     }

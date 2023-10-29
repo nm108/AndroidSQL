@@ -27,7 +27,7 @@ public class JDBCDatabaseHelper {
     private static final String userName = "nm108_awdb";
     private static final String password = "Firewall123";
 
-    private static final String connURL = "jdbc:jtds:sqlserver://"+ip+";instance="+dbInstance+";Database='"+db+"'";
+    private static final String connURL = "jdbc:jtds:sqlserver://" + ip + ";instance=" + dbInstance + ";Database='" + db + "'";
 
     private Connection conn = null;
 
@@ -43,74 +43,81 @@ public class JDBCDatabaseHelper {
     public Context getContext() {
         return c;
     }
-    public Connection getConnection() throws SQLException {
-        if ((conn != null) && (!conn.isClosed())) { return conn; };
 
-
-
-        try {
-            Class.forName(driverClass).newInstance();
-
-            conn = DriverManager.getConnection(connURL, userName, password);
-            System.out.println("conn=="+conn);
-
-        } catch (SQLException se) {
-            System.out.println("1conn=="+conn);
-
-            if (se.getMessage() != null) {
-                Log.e("Error 1: ", se.getMessage());
-            }
-
-        } catch (ClassNotFoundException e) {
-            System.out.println("2conn=="+conn);
-            if (e.getMessage() != null) {
-                Log.e("Error 3: ", e.getMessage());
-            }
-
-        } catch (Exception e) {
-            System.out.println("3conn=="+conn);
-            if (e.getMessage() != null) {
-                System.out.println(e);
-
-                Log.e("Error 2: ", e.getMessage());
-            }
+    public Connection getConnection() throws Exception {
+        if ((conn != null) && (!conn.isClosed())) {
+            return conn;
         }
+        ;
+
+
+//        try {
+        Class.forName(driverClass).newInstance();
+
+        conn = DriverManager.getConnection(connURL, userName, password);
+        System.out.println("conn==" + conn);
+//
+//        } catch (SQLException se) {
+//            System.out.println("1conn=="+conn);
+//
+//            if (se.getMessage() != null) {
+//                Log.e("Error 1: ", se.getMessage());
+//            }
+//
+//        } catch (ClassNotFoundException e) {
+//            System.out.println("2conn=="+conn);
+//            if (e.getMessage() != null) {
+//                Log.e("Error 3: ", e.getMessage());
+//            }
+
+//        } catch (Exception e) {
+//            System.out.println("3conn=="+conn);
+//            if (e.getMessage() != null) {
+//                System.out.println(e);
+//
+//                Log.e("Error 2: ", e.getMessage());
+//            }
+//        }
 
         return conn;
     }
 
 
-    public void doDelete(String id) throws SQLException {
+    public void doDelete(String id) throws Exception {
 
-            conn = getConnection();
-            PreparedStatement statement = conn.prepareStatement("DELETE FROM Products WHERE id='"+id+"';");
-            statement.executeUpdate();
+//        try {
+        conn = getConnection();
+        PreparedStatement statement = conn.prepareStatement("DELETE FROM Products WHERE id='" + id + "';");
+        statement.executeUpdate();
+//        } catch (NullPointerException npe ) {
+//            throw new RuntimeException(npe);
+//        }
 //conn.commit();
-conn.close();
-conn = null;
+        conn.close();
+        conn = null;
     }
 
-    public void doInsert(String productName, int productAmount) throws SQLException {
+    public void doInsert(String productName, int productAmount) throws Exception {
         conn = getConnection();
-        try {
-            PreparedStatement statement = conn.prepareStatement(
-                    "INSERT INTO Products (ProductName, ProductQuantity)" +
-                            " VALUES('"+productName+"',"+productAmount+")");
+//        try {
+        PreparedStatement statement = conn.prepareStatement(
+                "INSERT INTO Products (ProductName, ProductQuantity)" +
+                        " VALUES('" + productName + "'," + productAmount + ")");
 
 
-            statement.executeUpdate();
-            conn.close();
-            conn = null;
+        statement.executeUpdate();
+        conn.close();
+        conn = null;
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
 
     // TODO: this is just prototype, replace it with code that uses database properly.
     // returned value also needs to be modified.
-    public ArrayList doSelect(String QueryStr) throws SQLException {
+    public ArrayList doSelect(String QueryStr) throws Exception {
         ResultSet rs;
         ArrayList result = new ArrayList();
 
