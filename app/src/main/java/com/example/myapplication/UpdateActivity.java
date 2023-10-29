@@ -21,6 +21,8 @@ import java.util.ArrayList;
 public class UpdateActivity extends AppCompatActivity {
     private Button doUpdateQueryButton;
 
+    private Button doUpdateButton;
+
     private String exceptionMessageString = "";
 
     private EditText queryEditText;
@@ -49,7 +51,7 @@ public class UpdateActivity extends AppCompatActivity {
 
 
         setContentView(R.layout.activity_update);
-        doUpdateQueryButton = findViewById(R.id.DoUpdateQueryButton);
+
         returnButton = findViewById(R.id.ReturnButton);
 
         returnButton.setOnClickListener(
@@ -82,6 +84,16 @@ public class UpdateActivity extends AppCompatActivity {
 
         originalProductTextView = findViewById(R.id.originalProductTextView);
         originalProductTextView.setVisibility(View.GONE);
+
+
+        doUpdateButton = findViewById(R.id.DoUpdateButton);
+        doUpdateButton.setVisibility(View.GONE);
+
+        doUpdateButton.setOnClickListener(
+                (final View v) -> {
+
+                }
+        );
 
         doUpdateQueryButton.setOnClickListener(
                 this::onClick
@@ -155,7 +167,6 @@ public class UpdateActivity extends AppCompatActivity {
 
 
                 Product p = (Product) parent.getItemAtPosition(position);
-                String val = p.id;
 
                 originalProductTextView.setVisibility(View.VISIBLE);
                 originalProductTextView.setText("Original Product id: "+p.id+"" +
@@ -166,6 +177,7 @@ public class UpdateActivity extends AppCompatActivity {
                 doUpdateQueryButton.setVisibility(View.GONE);
                 newProductNameEditText.setVisibility(View.VISIBLE);
                 newProductAmountEditText.setVisibility(View.VISIBLE);
+                doUpdateButton.setVisibility(View.VISIBLE);
 
 
 //                ad.setMessage("Selected Product's id: " + val);

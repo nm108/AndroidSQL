@@ -22,6 +22,15 @@
         android:layout_height="50dp"
         android:text="Return"></Button>
 
+    <Button android:id="@+id/DoUpdateButton"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="620dp"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:text="Update" />
+
+
+
     <Button android:id="@+id/DoUpdateQueryButton"
         android:layout_width="match_parent"
         android:layout_height="50dp"
