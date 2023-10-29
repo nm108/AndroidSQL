@@ -3,6 +3,7 @@ package com.example.myapplication;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -86,40 +87,56 @@ private void switchActivities() {
 private void onClick(View v) {
     if (busy) return;
     busy = true;
-    doInsertQueryButton.setVisibility(View.GONE);
     try {
         pd.show();
-        doInsert();
-    } catch (SQLException e) {
-        throw new RuntimeException(e);
+
+        SQLTask st = new SQLTask();
+        st.execute();
+    } catch (android.database.SQLException e) {
+        ad.setMessage("SQL Exception: " + e);
+        ad.show();
+
     }
     // switchActivities();
     }
 
+    class SQLTask extends AsyncTask<Void[], Void, Void> {
 
+        public Void doInBackground(Void[]... params) {
+            String productName = productNameEditText.getText().toString();
 
-private void doInsert() throws SQLException {
+            if (productName == null || productName.equals("")) {
+                productName = "!!!";
+            }
 
-    String productName = productNameEditText.getText().toString();
+            int pamount;
+            try {
+                pamount = Integer.parseInt(
+                        productAmountEditText.getText().toString()
+                );}
+            catch (Exception e) {
+                pamount = -1;
+            }
 
-    if (productName == null || productName.equals("")) {
-        productName = "-=- -=-";
+            JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper();
+            try {
+                jdbcDatabaseHelper.doInsert(productName, pamount);
+            } catch (SQLException se) {
+                throw new RuntimeException(se);
+            }
+            doInsertQueryButton.setVisibility(View.VISIBLE);
+            return null;
+        }
+
+        protected void onPostExecute(Void v) {
+
+            busy = false;
+
+            pd.dismiss();
+            ad.show();
+        }
+
     }
 
-    int pamount;
-    try {
-        pamount = Integer.parseInt(
-                productAmountEditText.getText().toString()
-        );}
-    catch (Exception e) {
-        pamount = -1;
-    }
 
-    JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper();
-    jdbcDatabaseHelper.doInsert(productName, pamount);
-    doInsertQueryButton.setVisibility(View.VISIBLE);
-
-    pd.dismiss();
-    ad.show();
-}
 };
