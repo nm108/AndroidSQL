@@ -6,21 +6,73 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
+    <TextView
+        android:id="@+id/originalProductTextView"
+        android:layout_width="400dp"
+        android:layout_height="100dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="50dp"
+
+        ></TextView>
+
     <Button android:id="@+id/ReturnButton"
         android:layout_marginLeft="100dp"
-        android:layout_marginTop="400dp"
+        android:layout_marginTop="680dp"
         android:layout_width="200dp"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:text="Return"></Button>
 
     <Button android:id="@+id/DoUpdateQueryButton"
-        android:layout_marginLeft="100dp"
-        android:layout_marginTop="200dp"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_margin="50dp"
         android:text="Update"></Button>
 
+    <EditText
+        android:id="@+id/QueryEditText"
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginLeft="50dp"
+        android:hint="Enter product name here (or part of it's name):"
+        android:text="">
 
+    </EditText>
+
+
+    <EditText
+        android:id="@+id/NewProductNameEditText"
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="150dp"
+        android:layout_marginLeft="50dp"
+        android:hint="Enter new product name here:"
+        android:text="">
+
+    </EditText>
+
+
+    <EditText
+        android:id="@+id/NewProductAmountEditText"
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="250dp"
+        android:layout_marginLeft="50dp"
+        android:hint="Enter new product amount here:"
+        android:text="">
+
+    </EditText>
+
+
+    <ListView
+        android:id="@+id/LV"
+        android:layout_width="300dp"
+        android:layout_height="400dp"
+
+
+        android:layout_marginTop="200dp"
+        android:layout_marginLeft="50dp"
+        ></ListView>
 
 </RelativeLayout>
 

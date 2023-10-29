@@ -83,9 +83,7 @@ public class DBConfigActivity extends AppCompatActivity {
                     sqlh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.DBInstanceEditText), DBConfigEntry.DB_INSTANCE);
                     sqlh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.UsernameEditText), DBConfigEntry.USER_NAME);
                     sqlh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.PasswordEditText), DBConfigEntry.PASSWORD);
-                    // restart activity
-                    finish();
-                    startActivity(getIntent());
+                    switchActivities();
                 });
 
 
