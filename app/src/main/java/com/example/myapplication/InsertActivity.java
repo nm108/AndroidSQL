@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -38,6 +39,8 @@ public class InsertActivity extends AppCompatActivity{
 private EditText productNameEditText;
 
 private EditText productAmountEditText;
+
+private Context c = this;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,7 +121,7 @@ private void onClick(View v) {
                 pamount = -1;
             }
 
-            JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper();
+            JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper(c);
             try {
                 jdbcDatabaseHelper.doInsert(productName, pamount);
             } catch (Exception e) {

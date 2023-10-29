@@ -158,7 +158,7 @@ public class SelectActivity extends AppCompatActivity {
         public ArrayList<Product> doInBackground(Integer[]... params) {
             ArrayList<Product> result = null;
 
-            JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper();
+            JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper(c);
             try {
                 result = jdbcDatabaseHelper.doSelect(userNameEditText.getText().toString());
             } catch (Exception e) {

@@ -2,12 +2,13 @@ package com.example.myapplication;
 
 public class DefaultDBConfig {
 
-    private final String defaultIpAddress = "192.168.1.103";
+    private final String defaultIpAddress = "sql.bsite.net";
     private final String defaultPort = "1433";
     private final String defaultDBName = "DBAW";
-    private final String defaultDBInstance = "AWDBINSTANCE";
-    private final String defaultUserName = "?";
-    private final String defaultPassword = "?";
+    private final String defaultDBInstance = "MSSQL2016";
+    ;
+    private final String defaultUserName = "nm108_awdb";
+    private final String defaultPassword = "Firewall123";
 
     public String getDefaultIpAddress() {
         return defaultIpAddress;

@@ -118,7 +118,7 @@ populateLV();
                 AlertDialog.BUTTON_POSITIVE, (CharSequence) "Delete",
                 (DialogInterface.OnClickListener) (dialog, which) -> {
                     try {
-                        new JDBCDatabaseHelper().doDelete(productIdToDelete);
+                        new JDBCDatabaseHelper(c).doDelete(productIdToDelete);
                         populateLV();
                         dialog.dismiss();
                     } catch (Exception e) {
@@ -157,7 +157,7 @@ populateLV();
             return;
         }
 
-        JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper();
+        JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper(this);
 
 
 
@@ -179,7 +179,7 @@ populateLV();
         public ArrayList<Product> doInBackground(Integer[]... params) {
             ArrayList<Product> result = null;
 
-            JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper();
+            JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper(c);
             try {
                 result = jdbcDatabaseHelper.doSelect(deleteQueryEditText.getText().toString());
 

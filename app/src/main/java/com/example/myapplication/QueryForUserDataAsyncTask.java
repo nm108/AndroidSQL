@@ -58,7 +58,7 @@ public class QueryForUserDataAsyncTask extends AsyncTask <Void,Void,Void> {
     protected Void doInBackground(Void... voids) {
         try {
 
-            JDBCDatabaseHelper jdbcdbh = new JDBCDatabaseHelper();
+            JDBCDatabaseHelper jdbcdbh = new JDBCDatabaseHelper(c);
             ArrayList<Product> al = jdbcdbh.doSelect(userName);
 
 //            final Connection conn = jdbcdbh.getConnection();

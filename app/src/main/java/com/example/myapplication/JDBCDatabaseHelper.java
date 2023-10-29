@@ -20,24 +20,18 @@ import java.util.List;
  */
 public class JDBCDatabaseHelper {
 
-    private static final String ip = "sql.bsite.net";
     private static final String driverClass = "net.sourceforge.jtds.jdbc.Driver";
-    private static final String dbInstance = "MSSQL2016";
-    private static final String db = "DBAW";
-    private static final String userName = "nm108_awdb";
-    private static final String password = "Firewall123";
 
-    private static final String connURL = "jdbc:jtds:sqlserver://" + ip + ";instance=" + dbInstance + ";Database='" + db + "'";
 
     private Connection conn = null;
 
-    private Context c;
+    private Context c = null;
 
-    public JDBCDatabaseHelper() {
+    public JDBCDatabaseHelper(final Context c) {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
                 .permitAll().build();
         StrictMode.setThreadPolicy(policy);
-
+        this.c = c;
     }
 
     public Context getContext() {
@@ -54,7 +48,18 @@ public class JDBCDatabaseHelper {
 //        try {
         Class.forName(driverClass).newInstance();
 
-        conn = DriverManager.getConnection(connURL, userName, password);
+        DBConfigSQLiteHelper sqlliteHelper = new DBConfigSQLiteHelper(c);
+
+        final String connURL =
+                "jdbc:jtds:sqlserver://" + sqlliteHelper.getIpAddress() +
+                ":"+sqlliteHelper.getPort() +
+                ";instance=" + sqlliteHelper.getDBInstance() +
+                ";Database='" + sqlliteHelper.getDBName() + "'";
+
+
+        conn = DriverManager.getConnection(connURL,
+                sqlliteHelper.getUserName(),
+                sqlliteHelper.getPassword());
         System.out.println("conn==" + conn);
 //
 //        } catch (SQLException se) {
