@@ -39,11 +39,15 @@ public class UpdateActivity extends AppCompatActivity {
 
     private boolean busy;
 
+    private boolean error;
+
     private ProgressDialog pd;
 
     private ListView lv;
 
     AlertDialog ad;
+
+    private Product p;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,7 +95,8 @@ public class UpdateActivity extends AppCompatActivity {
 
         doUpdateButton.setOnClickListener(
                 (final View v) -> {
-
+                    SQLUpdateTask sqlUpdateTask = new SQLUpdateTask();
+                    sqlUpdateTask.execute();
                 }
         );
 
@@ -109,7 +114,7 @@ public class UpdateActivity extends AppCompatActivity {
         );
 
         ad = new AlertDialog.Builder(this).create();
-        ad.setTitle("Product Updated");
+
         ad.setCancelable(false);
         ad.setCanceledOnTouchOutside(false);
         ad.setButton(
@@ -117,8 +122,17 @@ public class UpdateActivity extends AppCompatActivity {
                 (DialogInterface.OnClickListener) (dialog, which) ->
 
                 {
+
+                    queryEditText.setVisibility(View.VISIBLE);
+                    originalProductTextView.setVisibility(View.GONE);
+                    doUpdateButton.setVisibility(View.GONE);
+                    newProductNameEditText.setVisibility(View.GONE);
+                    newProductAmountEditText.setVisibility(View.GONE);
+                    originalProductTextView.setVisibility(View.GONE);
+                    lv.setVisibility(View.VISIBLE);
+                    doUpdateQueryButton.setVisibility(View.VISIBLE);
+                    populateLV();
                     dialog.dismiss();
-                    switchActivities();
                 });
 
 
@@ -138,35 +152,30 @@ public class UpdateActivity extends AppCompatActivity {
         if (busy) return;
         busy = true;
         pd.show();
+
+        populateLV();
 //
-        UpdateActivity.SQLTask sTask = new UpdateActivity.SQLTask();
+    }
+//
+
+    private void populateLV() {
+        pd.show();
+        UpdateActivity.SQLQueryTask sTask = new UpdateActivity.SQLQueryTask();
         Integer[] sarr = new Integer[]{};
         ArrayList<Product> data = new ArrayList<Product>();
-        try {
-            sTask.execute(sarr);
-            // Wait for this worker thread’s notification
-//                    sTask.wait();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        ad = new AlertDialog.Builder(this).create();
-        ad.setTitle("Selected Product");
-        ad.setCancelable(false);
-        ad.setCanceledOnTouchOutside(false);
-        ad.setButton(
-                AlertDialog.BUTTON_NEUTRAL, (CharSequence) "Ok",
-                (DialogInterface.OnClickListener) (dialog, which) ->
 
-                {
-                    dialog.dismiss();
-                });
+        sTask.execute(sarr);
+        // Wait for this worker thread’s notification
+//                    sTask.wait();
+
+
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position,
                                     long id) {
 
 
-                Product p = (Product) parent.getItemAtPosition(position);
+                p = (Product) parent.getItemAtPosition(position);
 
                 originalProductTextView.setVisibility(View.VISIBLE);
                 originalProductTextView.setText("Original Product id: "+p.id+"" +
@@ -178,6 +187,11 @@ public class UpdateActivity extends AppCompatActivity {
                 newProductNameEditText.setVisibility(View.VISIBLE);
                 newProductAmountEditText.setVisibility(View.VISIBLE);
                 doUpdateButton.setVisibility(View.VISIBLE);
+//                populateLV();
+
+
+                // Wait for this worker thread’s notification
+//                    sTask.wait();
 
 
 //                ad.setMessage("Selected Product's id: " + val);
@@ -186,11 +200,10 @@ public class UpdateActivity extends AppCompatActivity {
 
 
         });
+
     }
-//
 
-
-        class SQLTask extends AsyncTask<Integer[], Integer, ArrayList<Product>> {
+        class SQLQueryTask extends AsyncTask<Integer[], Integer, ArrayList<Product>> {
 
             public ArrayList<Product> doInBackground(Integer[]... params) {
                 ArrayList<Product> result = null;
@@ -216,6 +229,7 @@ public class UpdateActivity extends AppCompatActivity {
                     return;
                 }
 
+
                 ProductAdapter pa = new ProductAdapter(c, products);
                 lv.setAdapter(pa);
 
@@ -226,7 +240,54 @@ public class UpdateActivity extends AppCompatActivity {
         }
 //
 
+    class SQLUpdateTask extends AsyncTask<Integer[], Integer, ArrayList<Product>> {
 
+        public ArrayList<Product> doInBackground(Integer[]... params) {
+            JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper(c);
+            String newProductName = newProductNameEditText.getText().toString();
+            int newProductAmount;
+            try {
+                newProductAmount = Integer.parseInt(
+                        newProductAmountEditText.getText().toString()
+                );
+            } catch (NumberFormatException e) {
+                newProductAmount = -1;
+            }
+
+            try {
+                jdbcDatabaseHelper.doUpdate(p.id,
+                        newProductName, newProductAmount);
+            } catch (Exception e) {
+                exceptionMessageString = e.toString();
+                error = true;
+                return null;
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Product> products) {
+            super.onPostExecute(products);
+            if (error) {
+                ad.setMessage("Exception: " + exceptionMessageString);
+                ad.show();
+                busy = false;
+                pd.dismiss();
+                error = false;
+                return;
+            }
+
+            ad.setMessage("Product Updated.");
+            ad.show();
+
+
+            busy = false;
+            pd.dismiss();
+
+
+
+        }
+    }
 
 };
 

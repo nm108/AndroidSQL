@@ -119,10 +119,26 @@ public class JDBCDatabaseHelper {
 //        }
     }
 
+    public void doUpdate( String id, String newProductName, int newProductAmount) throws Exception {
+
+//        Log.d("Update", "doUpdate: "+id+","+newProductName+","+newProductAmount);
+
+        conn = getConnection();
+
+        PreparedStatement statement = conn.prepareStatement(
+                    "UPDATE Products " +
+                            " SET ProductName='"+ newProductName +
+                            "', ProductQuantity='" + newProductAmount +
+                            "' WHERE ID='"+id+"'");
+            statement.executeUpdate();
+            conn.close();
+            conn = null;
+    }
+
 
     // TODO: this is just prototype, replace it with code that uses database properly.
     // returned value also needs to be modified.
-    public ArrayList doSelect(String QueryStr) throws Exception {
+    public ArrayList doSelect(String queryStr) throws Exception {
         ResultSet rs;
         ArrayList result = new ArrayList();
 
@@ -130,7 +146,7 @@ public class JDBCDatabaseHelper {
 
             conn = getConnection();
             final Statement statement = conn.createStatement();
-            rs = statement.executeQuery("SELECT * From Products WHERE ProductName LIKE '%" + QueryStr + "%'");
+            rs = statement.executeQuery("SELECT * From Products WHERE ProductName LIKE '%" + queryStr + "%'");
 
 
         //
