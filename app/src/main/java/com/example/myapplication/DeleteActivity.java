@@ -40,6 +40,8 @@ public class DeleteActivity extends AppCompatActivity {
 
     private ProgressDialog pd;
 
+    private boolean busyDeleting;
+
 private boolean error = false;
     private boolean busy = false;
 
@@ -120,6 +122,10 @@ populateLV();
                 AlertDialog.BUTTON_POSITIVE, (CharSequence) "Delete",
                 (DialogInterface.OnClickListener) (dialog, which) -> {
                     try {
+                        if (busyDeleting) {
+                            return;
+                        }
+                        busyDeleting = true;
                         SQLDeleteTask sqlDeleteTask = new SQLDeleteTask();
                         sqlDeleteTask.execute();
                         populateLV();
@@ -249,6 +255,8 @@ populateLV();
     class SQLDeleteTask extends AsyncTask<Integer[], Integer, ArrayList<Product>> {
 
         public ArrayList<Product> doInBackground(Integer[]... params) {
+
+            busy = true;
             ArrayList<Product> result = null;
             if (!pd.isShowing()) {
                 pd.show();
@@ -270,10 +278,12 @@ populateLV();
                 exceptionAd.show();
                 error = false;
                 pd.dismiss();
-                doQueryButton.setVisibility(View.VISIBLE);
-                busy = false;
                 return;
             }
+            pd.dismiss();
+//            doQueryButton.setVisibility(View.VISIBLE);
+            busy = false;
+            busyDeleting = false;
         }
 
     }
