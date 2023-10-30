@@ -101,6 +101,7 @@ public class UpdateActivity extends AppCompatActivity {
                         return;
                     }
                     busyUpdating = true;
+                    pd.show();
                     SQLUpdateTask sqlUpdateTask = new SQLUpdateTask();
                     sqlUpdateTask.execute();
                 }
@@ -249,6 +250,7 @@ public class UpdateActivity extends AppCompatActivity {
     class SQLUpdateTask extends AsyncTask<Integer[], Integer, ArrayList<Product>> {
 
         public ArrayList<Product> doInBackground(Integer[]... params) {
+
             JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper(c);
             String newProductName = newProductNameEditText.getText().toString();
             if (newProductName.trim().equals("")) {
