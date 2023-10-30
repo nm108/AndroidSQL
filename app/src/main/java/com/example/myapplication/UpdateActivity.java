@@ -209,6 +209,7 @@ public class UpdateActivity extends AppCompatActivity {
                 ArrayList<Product> result = null;
 
                 JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper(c);
+
                 try {
                     result = jdbcDatabaseHelper.doSelect(queryEditText.getText().toString());
                 } catch (Exception e) {
@@ -245,6 +246,9 @@ public class UpdateActivity extends AppCompatActivity {
         public ArrayList<Product> doInBackground(Integer[]... params) {
             JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper(c);
             String newProductName = newProductNameEditText.getText().toString();
+            if (newProductName.trim().equals("")) {
+                newProductName = "!!";
+            }
             int newProductAmount;
             try {
                 newProductAmount = Integer.parseInt(
