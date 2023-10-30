@@ -30,6 +30,8 @@ public class DeleteActivity extends AppCompatActivity {
 
     private AlertDialog dad;
 
+    private AlertDialog cad;
+
     private AlertDialog exceptionAd;
 
 
@@ -118,8 +120,22 @@ populateLV();
                 AlertDialog.BUTTON_POSITIVE, (CharSequence) "Delete",
                 (DialogInterface.OnClickListener) (dialog, which) -> {
                     try {
-                        new JDBCDatabaseHelper(c).doDelete(productIdToDelete);
+                        SQLDeleteTask sqlDeleteTask = new SQLDeleteTask();
+                        sqlDeleteTask.execute();
                         populateLV();
+                        cad = new AlertDialog.Builder(this).create();
+                        cad.setTitle("Database Operation");
+                        cad.setMessage("Product Deleted");
+                        cad.setCancelable(false);
+                        cad.setCanceledOnTouchOutside(false);
+
+                        cad.setButton(AlertDialog.BUTTON_NEUTRAL, "Ok",
+                                (DialogInterface.OnClickListener)
+                                        (dia, wh) -> {
+                                    populateLV();
+                                    dia.dismiss();
+                                });
+                        cad.show();
                         dialog.dismiss();
                     } catch (Exception e) {
                         dialog.dismiss();
@@ -142,6 +158,7 @@ populateLV();
         busy = true;
         pd.show();
 
+
         DeleteActivity.SQLTask sTask = new DeleteActivity.SQLTask();
         Integer[] sarr = new Integer[]{};
         ArrayList<Product> data = new ArrayList<Product>();
@@ -157,7 +174,7 @@ populateLV();
             return;
         }
 
-        JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper(this);
+//        JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper(this);
 
 
 
@@ -225,6 +242,38 @@ populateLV();
             lv.setAdapter(adapter);
             doQueryButton.setVisibility(View.VISIBLE);
 
+        }
+
+    }
+
+    class SQLDeleteTask extends AsyncTask<Integer[], Integer, ArrayList<Product>> {
+
+        public ArrayList<Product> doInBackground(Integer[]... params) {
+            ArrayList<Product> result = null;
+            if (!pd.isShowing()) {
+                pd.show();
+            }
+//            pd.show();
+            try {
+                new JDBCDatabaseHelper(c).doDelete(productIdToDelete);
+            } catch (Exception e) {
+                error = true;
+                exceptionAd.setMessage("Exception: "+e);
+            }
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Product> products) {
+            super.onPostExecute(products);
+            if (error) {
+                exceptionAd.show();
+                error = false;
+                pd.dismiss();
+                doQueryButton.setVisibility(View.VISIBLE);
+                busy = false;
+                return;
+            }
         }
 
     }

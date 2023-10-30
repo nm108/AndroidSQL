@@ -138,7 +138,7 @@ public class JDBCDatabaseHelper {
 
     // TODO: this is just prototype, replace it with code that uses database properly.
     // returned value also needs to be modified.
-    public ArrayList doSelect(String queryStr) throws Exception {
+    public ArrayList<Product> doSelect(String queryStr) throws Exception {
         ResultSet rs;
         ArrayList result = new ArrayList();
 
