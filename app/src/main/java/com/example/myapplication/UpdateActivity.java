@@ -23,7 +23,7 @@ public class UpdateActivity extends AppCompatActivity {
 
     private Button doUpdateButton;
 
-    private String exceptionMessageString = "";
+    private AlertDialog exceptionAD;
 
     private EditText queryEditText;
 
@@ -121,9 +121,14 @@ public class UpdateActivity extends AppCompatActivity {
         );
 
         ad = new AlertDialog.Builder(this).create();
-
         ad.setCancelable(false);
         ad.setCanceledOnTouchOutside(false);
+
+        exceptionAD = new AlertDialog.Builder(this).create();
+        exceptionAD.setCancelable(false);
+        exceptionAD.setCanceledOnTouchOutside(false);
+
+
         ad.setButton(
                 AlertDialog.BUTTON_NEUTRAL, (CharSequence) "Ok",
                 (DialogInterface.OnClickListener) (dialog, which) ->
@@ -141,6 +146,14 @@ public class UpdateActivity extends AppCompatActivity {
                     populateLV();
                     dialog.dismiss();
                 });
+
+        exceptionAD.setButton(
+                AlertDialog.BUTTON_NEUTRAL, (CharSequence) "Ok",
+                (DialogInterface.OnClickListener) (dialog, which) -> {
+                    error = false;
+                    dialog.dismiss();
+                }
+        );
 
 
     }
@@ -219,7 +232,7 @@ public class UpdateActivity extends AppCompatActivity {
                 try {
                     result = jdbcDatabaseHelper.doSelect(queryEditText.getText().toString());
                 } catch (Exception e) {
-                    exceptionMessageString = e.toString();
+                    exceptionAD.setMessage(e.toString());
                     return null;
                 }
                 return result;
@@ -229,9 +242,9 @@ public class UpdateActivity extends AppCompatActivity {
             protected void onPostExecute(ArrayList<Product> products) {
                 super.onPostExecute(products);
                 if (products == null) {
-                    ad.setMessage("Exception: " + exceptionMessageString);
-                    ad.show();
+                    exceptionAD.show();
                     busy = false;
+
                     pd.dismiss();
                     return;
                 }
@@ -269,7 +282,7 @@ public class UpdateActivity extends AppCompatActivity {
                 jdbcDatabaseHelper.doUpdate(p.id,
                         newProductName, newProductAmount);
             } catch (Exception e) {
-                exceptionMessageString = e.toString();
+                exceptionAD.setMessage(e.toString());
                 error = true;
                 return null;
             }
@@ -280,8 +293,7 @@ public class UpdateActivity extends AppCompatActivity {
         protected void onPostExecute(ArrayList<Product> products) {
             super.onPostExecute(products);
             if (error) {
-                ad.setMessage("Exception: " + exceptionMessageString);
-                ad.show();
+                exceptionAD.show();
                 busy = false;
                 pd.dismiss();
                 error = false;
