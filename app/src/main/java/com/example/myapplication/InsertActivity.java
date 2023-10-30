@@ -35,6 +35,8 @@ public class InsertActivity extends AppCompatActivity{
 
     private boolean busy = false;
 
+    private boolean error;
+
 
 private EditText productNameEditText;
 
@@ -74,7 +76,9 @@ private Context c = this;
 
                 {
                     dialog.dismiss();
-                    switchActivities();
+                    if (error) {
+                        switchActivities();
+                    }
                 });
     }
 
@@ -97,6 +101,7 @@ private void onClick(View v) {
         st.execute();
     } catch (android.database.SQLException e) {
         ad.setMessage("SQL Exception: " + e);
+        error = true;
         ad.show();
 
     }
@@ -126,6 +131,7 @@ private void onClick(View v) {
                 jdbcDatabaseHelper.doInsert(productName, pamount);
             } catch (Exception e) {
                 ad.setMessage("Exception: "+e);
+                error = true;
             }
             return null;
         }

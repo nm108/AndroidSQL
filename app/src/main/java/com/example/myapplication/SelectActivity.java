@@ -122,7 +122,7 @@ public class SelectActivity extends AppCompatActivity {
             throw new RuntimeException(e);
         }
         ad = new AlertDialog.Builder(this).create();
-        ad.setTitle("Selected Product");
+        ad.setTitle("Exception");
         ad.setCancelable(false);
         ad.setCanceledOnTouchOutside(false);
         ad.setButton(
@@ -131,19 +131,10 @@ public class SelectActivity extends AppCompatActivity {
 
                 {
                     dialog.dismiss();
+                    switchActivities();
                 });
 
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                      public void onItemClick(AdapterView<?> parent, View v, int position,
-                                                              long id) {
 
-
-                                          Product p = (Product) parent.getItemAtPosition(position);
-                                          String val = p.id;
-                                          ad.setMessage("Selected Product's id: " + val);
-                                          ad.show();
-                                      }
-                                  });
 
 //
 

@@ -152,6 +152,7 @@ public class UpdateActivity extends AppCompatActivity {
                 (DialogInterface.OnClickListener) (dialog, which) -> {
                     error = false;
                     dialog.dismiss();
+                    switchActivities();
                 }
         );
 

@@ -96,6 +96,7 @@ private EditText deleteQueryEditText;
                 AlertDialog.BUTTON_NEUTRAL, (CharSequence)  "Ok",
                 (DialogInterface.OnClickListener) (dialog, which) -> {
                     dialog.dismiss();
+                    switchActivities();
                 }
         );
 
@@ -278,6 +279,7 @@ populateLV();
                 exceptionAd.show();
                 error = false;
                 pd.dismiss();
+
                 return;
             }
             pd.dismiss();
