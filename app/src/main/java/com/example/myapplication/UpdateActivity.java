@@ -39,6 +39,8 @@ public class UpdateActivity extends AppCompatActivity {
 
     private boolean busy;
 
+    private boolean busyUpdating;
+
     private boolean error;
 
     private ProgressDialog pd;
@@ -95,6 +97,10 @@ public class UpdateActivity extends AppCompatActivity {
 
         doUpdateButton.setOnClickListener(
                 (final View v) -> {
+                    if (busyUpdating) {
+                        return;
+                    }
+                    busyUpdating = true;
                     SQLUpdateTask sqlUpdateTask = new SQLUpdateTask();
                     sqlUpdateTask.execute();
                 }
@@ -173,7 +179,6 @@ public class UpdateActivity extends AppCompatActivity {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position,
                                     long id) {
-
 
                 p = (Product) parent.getItemAtPosition(position);
 
@@ -286,6 +291,7 @@ public class UpdateActivity extends AppCompatActivity {
 
 
             busy = false;
+            busyUpdating = false;
             pd.dismiss();
 
 
