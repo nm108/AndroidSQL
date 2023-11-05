@@ -286,7 +286,6 @@ public class DeleteActivity extends AppCompatActivity {
         operationResultAlertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, OK_LABEL,
                 (DialogInterface.OnClickListener)
                         (dia, wh) -> {
-                    populateProductsListView();
                     dia.dismiss();
                 });
     }
@@ -307,19 +306,23 @@ public class DeleteActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Async Task for querying database in background (SELECT operation)
+     *
+     * @author Andrzej Wysocki (nm108).
+     */
     class SQLSelectAsyncTask extends AsyncTask<Void[], Void, ArrayList<Product>> {
 
         public ArrayList<Product> doInBackground(Void[]... params) {
             ArrayList<Product> result = null;
 
+            // querying database (SELECT operation).
             JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper(context);
             try {
                 result = jdbcDatabaseHelper.doSelect(deleteQueryEditText.getText().toString());
-
             } catch (Exception e) {
                 setBusy(true);
                 errorAlertDialog.setMessage(EXCEPTION_LABEL+e);
-
             }
             return result;
         }
@@ -351,7 +354,7 @@ public class DeleteActivity extends AppCompatActivity {
             productsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View v, int position,
                                         long id) {
-                    Product p = (Product) parent.getItemAtPosition(position);
+                    final Product p = (Product) parent.getItemAtPosition(position);
                     productIdToDelete = p.id;
                     deleteProductQuestionAlertDialog.setMessage(PRODUCT_NAME_LABEL +p.name+"\n"+
                             PRODUCT_QUANTITY_LABEL +p.amount);
@@ -361,13 +364,21 @@ public class DeleteActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Async Task for operating database in background (DELETE operation)
+     *
+     * @author Andrzej Wysocki (nm108).
+     */
     class SQLDeleteAsyncTask extends AsyncTask<Integer[], Integer, ArrayList<Product>> {
         public ArrayList<Product> doInBackground(Integer[]... params) {
-
             ArrayList<Product> result = null;
+
+            // updating GUI
             if (!progressDialog.isShowing()) {
                 progressDialog.show();
             }
+
+            // operating database
             try {
                 new JDBCDatabaseHelper(context).doDelete(productIdToDelete);
             } catch (Exception e) {
@@ -393,6 +404,7 @@ public class DeleteActivity extends AppCompatActivity {
             // updating GUI
             progressDialog.dismiss();
             operationResultAlertDialog.show();
+            populateProductsListView();
 
             // we can handle clicks again
             busy = false;
