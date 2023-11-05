@@ -234,7 +234,7 @@ public class DeleteActivity extends AppCompatActivity {
     }
 
     private void onClick(View v) {
-        populateLV();
+        populateProductsListView();
     }
 
     private void prepareDeleteQuestionAlertDialog() {
@@ -251,9 +251,9 @@ public class DeleteActivity extends AppCompatActivity {
                             return;
                         }
                         busyDeleting = true;
-                        SQLDeleteTask sqlDeleteTask = new SQLDeleteTask();
-                        sqlDeleteTask.execute();
-                        populateLV();
+                        SQLDeleteAsyncTask sqlDeleteAsyncTask = new SQLDeleteAsyncTask();
+                        sqlDeleteAsyncTask.execute();
+                        populateProductsListView();
 
 
                         dialog.dismiss();
@@ -281,23 +281,21 @@ public class DeleteActivity extends AppCompatActivity {
         operationResultAlertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, OK_LABEL,
                 (DialogInterface.OnClickListener)
                         (dia, wh) -> {
-                    populateLV();
+                    populateProductsListView();
                     dia.dismiss();
                 });
     }
 
-    void populateLV() {
+    void populateProductsListView() {
         if (busy) return;
         busy = true;
         progressDialog.show();
 
 
-        DeleteActivity.SQLTask sTask = new DeleteActivity.SQLTask();
-        Integer[] sarr = new Integer[]{};
-        ArrayList<Product> data = new ArrayList<Product>();
+        SQLSelectAsyncTask sTask = new SQLSelectAsyncTask();
 
         try {
-            sTask.execute(sarr);
+            sTask.execute();
         } catch (Exception e) {
             errorAlertDialog.setMessage(EXCEPTION_LABEL+e);
             errorAlertDialog.show();
@@ -307,9 +305,9 @@ public class DeleteActivity extends AppCompatActivity {
 
 
 
-    class SQLTask extends AsyncTask<Integer[], Integer, ArrayList<Product>> {
+    class SQLSelectAsyncTask extends AsyncTask<Void[], Void, ArrayList<Product>> {
 
-        public ArrayList<Product> doInBackground(Integer[]... params) {
+        public ArrayList<Product> doInBackground(Void[]... params) {
             ArrayList<Product> result = null;
 
             JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper(context);
@@ -337,15 +335,14 @@ public class DeleteActivity extends AppCompatActivity {
             }
 
 
-            ProductAdapter pa = new ProductAdapter(context, products);
-            productsListView.setAdapter(pa);
+            ProductAdapter productAdapter = new ProductAdapter(context, products);
+            productsListView.setAdapter(productAdapter);
             busy = false;
             progressDialog.dismiss();
 
 
 
 
-            ProductAdapter adapter = new ProductAdapter(context, products);
 
             productsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -360,7 +357,7 @@ public class DeleteActivity extends AppCompatActivity {
 
                 }
             });
-            productsListView.setAdapter(adapter);
+
 
 
             doQueryButton.setVisibility(View.VISIBLE);
@@ -369,7 +366,7 @@ public class DeleteActivity extends AppCompatActivity {
 
     }
 
-    class SQLDeleteTask extends AsyncTask<Integer[], Integer, ArrayList<Product>> {
+    class SQLDeleteAsyncTask extends AsyncTask<Integer[], Integer, ArrayList<Product>> {
 
         public ArrayList<Product> doInBackground(Integer[]... params) {
 
