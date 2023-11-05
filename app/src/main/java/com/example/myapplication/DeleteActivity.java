@@ -163,7 +163,7 @@ public class DeleteActivity extends AppCompatActivity {
         prepareView();
     }
 
-    private void prepareAlertDialog() {
+    private void prepareErrorAlertDialog() {
         errorAlertDialog = new AlertDialog.Builder(this).create();
         errorAlertDialog.setTitle("Exception Occured");
         errorAlertDialog.setCancelable(false);
@@ -173,7 +173,7 @@ public class DeleteActivity extends AppCompatActivity {
                 AlertDialog.BUTTON_NEUTRAL, (CharSequence)  "Ok",
                 (DialogInterface.OnClickListener) (dialog, which) -> {
                     dialog.dismiss();
-                    switchActivities();
+                    switchActivityToMain();
                 }
         );
     }
@@ -191,19 +191,21 @@ public class DeleteActivity extends AppCompatActivity {
 
         returnButton.setOnClickListener(
                 (final View v) -> {
-                    switchActivities();
+                    switchActivityToMain();
                 }
 
         );
 
         returnButton.setOnClickListener(
                 (final View v) -> {
-                    switchActivities();
+                    switchActivityToMain();
                 }
         );
 
         prepareProgressDialog();
-        prepareAlertDialog();
+        prepareErrorAlertDialog();
+        prepareOperationResultAlertDialog();
+        prepareDeleteQuestionAlertDialog();
     }
 
     private void prepareProgressDialog() {
@@ -214,17 +216,16 @@ public class DeleteActivity extends AppCompatActivity {
     }
 
 
-    private void switchActivities() {
+    private void switchActivityToMain() {
         Intent switchActivityIntent = new Intent(this, MainActivity.class);
         startActivity(switchActivityIntent);
     }
 
     private void onClick(View v) {
+        populateLV();
+    }
 
-populateLV();
-
-
-
+    private void prepareDeleteQuestionAlertDialog() {
         deleteProductQuestionAlertDialog = new AlertDialog.Builder( this ).create();
         deleteProductQuestionAlertDialog.setTitle("Do you want to Delete a Product?");
         deleteProductQuestionAlertDialog.setCancelable(false);
@@ -240,19 +241,8 @@ populateLV();
                         SQLDeleteTask sqlDeleteTask = new SQLDeleteTask();
                         sqlDeleteTask.execute();
                         populateLV();
-                        operationResultAlertDialog = new AlertDialog.Builder(this).create();
-                        operationResultAlertDialog.setTitle("Database Operation");
-                        operationResultAlertDialog.setMessage("Product Deleted");
-                        operationResultAlertDialog.setCancelable(false);
-                        operationResultAlertDialog.setCanceledOnTouchOutside(false);
-
-                        operationResultAlertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Ok",
-                                (DialogInterface.OnClickListener)
-                                        (dia, wh) -> {
-                                    populateLV();
-                                    dia.dismiss();
-                                });
                         operationResultAlertDialog.show();
+
                         dialog.dismiss();
                     } catch (Exception e) {
                         dialog.dismiss();
@@ -266,8 +256,21 @@ populateLV();
                 (DialogInterface.OnClickListener) (dialog, which) -> {
                     dialog.dismiss();
                 });
+    }
 
+    private void prepareOperationResultAlertDialog() {
+        operationResultAlertDialog = new AlertDialog.Builder(this).create();
+        operationResultAlertDialog.setTitle("Database Operation");
+        operationResultAlertDialog.setMessage("Product Deleted");
+        operationResultAlertDialog.setCancelable(false);
+        operationResultAlertDialog.setCanceledOnTouchOutside(false);
 
+        operationResultAlertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Ok",
+                (DialogInterface.OnClickListener)
+                        (dia, wh) -> {
+                    populateLV();
+                    dia.dismiss();
+                });
     }
 
     void populateLV() {
@@ -280,8 +283,6 @@ populateLV();
         Integer[] sarr = new Integer[]{};
         ArrayList<Product> data = new ArrayList<Product>();
 
-
-
         try {
 
             sTask.execute(sarr);
@@ -290,20 +291,6 @@ populateLV();
             errorAlertDialog.show();
             return;
         }
-
-//        JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper(this);
-
-
-
-
-
-
-     ////        Thread t = new ThreadQuerySQL();
-////        t.run();
-
-//
-
-
     }
 
 
