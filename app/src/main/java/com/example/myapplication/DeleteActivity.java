@@ -60,6 +60,8 @@ public class DeleteActivity extends AppCompatActivity {
 
     private boolean error = false;
 
+    private boolean notYetDeleted = false;
+
 
     /* Accessors */
 
@@ -289,12 +291,25 @@ public class DeleteActivity extends AppCompatActivity {
             busyDeleting = true;
             SQLDeleteAsyncTask sqlDeleteAsyncTask = new SQLDeleteAsyncTask();
             sqlDeleteAsyncTask.execute();
-            populateProductsListView();
+
+            refreshListView();
         } catch (Exception e) {
             dialog.dismiss();
             errorAlertDialog.setMessage(EXCEPTION_LABEL+e);
             errorAlertDialog.show();
         }
+    }
+
+    private void refreshListView() {
+        try {
+            while (notYetDeleted) {
+                Thread.currentThread().wait(100);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        populateProductsListView();
     }
 
     /**
@@ -397,6 +412,8 @@ public class DeleteActivity extends AppCompatActivity {
      */
     class SQLDeleteAsyncTask extends AsyncTask<Integer[], Integer, ArrayList<Product>> {
         public ArrayList<Product> doInBackground(Integer[]... params) {
+            notYetDeleted = true;
+
             ArrayList<Product> result = null;
 
             // updating GUI
@@ -428,12 +445,12 @@ public class DeleteActivity extends AppCompatActivity {
             }
 
             // updating GUI
-            progressDialog.dismiss();
             operationResultAlertDialog.show();
 
-            populateProductsListView();
+            progressDialog.dismiss();
 
             // we can handle clicks again
+            notYetDeleted = false;
             busy = false;
             busyDeleting = false;
         }
