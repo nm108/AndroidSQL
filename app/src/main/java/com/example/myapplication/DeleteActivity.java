@@ -241,7 +241,7 @@ public class DeleteActivity extends AppCompatActivity {
                         SQLDeleteTask sqlDeleteTask = new SQLDeleteTask();
                         sqlDeleteTask.execute();
                         populateLV();
-                        operationResultAlertDialog.show();
+
 
                         dialog.dismiss();
                     } catch (Exception e) {
@@ -284,7 +284,6 @@ public class DeleteActivity extends AppCompatActivity {
         ArrayList<Product> data = new ArrayList<Product>();
 
         try {
-
             sTask.execute(sarr);
         } catch (Exception e) {
             errorAlertDialog.setMessage("Exception: "+e);
@@ -323,10 +322,14 @@ public class DeleteActivity extends AppCompatActivity {
                 busy = false;
                 return;
             }
+
+
             ProductAdapter pa = new ProductAdapter(context, products);
             productsListView.setAdapter(pa);
             busy = false;
             progressDialog.dismiss();
+
+
 
 
             ProductAdapter adapter = new ProductAdapter(context, products);
@@ -344,6 +347,8 @@ public class DeleteActivity extends AppCompatActivity {
                 }
             });
             productsListView.setAdapter(adapter);
+
+
             doQueryButton.setVisibility(View.VISIBLE);
 
         }
@@ -380,7 +385,9 @@ public class DeleteActivity extends AppCompatActivity {
                 return;
             }
             progressDialog.dismiss();
-//            doQueryButton.setVisibility(View.VISIBLE);
+
+            operationResultAlertDialog.show();
+
             busy = false;
             busyDeleting = false;
         }
