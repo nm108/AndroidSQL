@@ -58,6 +58,9 @@ public class DeleteActivity extends AppCompatActivity {
 
     private ListView productsListView;
 
+    private boolean error = false;
+
+
     /* Accessors */
 
     public Button getDoQueryButton() {
@@ -130,6 +133,14 @@ public class DeleteActivity extends AppCompatActivity {
 
     public void setBusyDeleting(boolean busyDeleting) {
         this.busyDeleting = busyDeleting;
+    }
+
+    public boolean isError() {
+        return error;
+    }
+
+    public void setError(boolean error) {
+        this.error = error;
     }
 
     public boolean isBusy() {
@@ -229,7 +240,7 @@ public class DeleteActivity extends AppCompatActivity {
     }
 
     private void prepareDeleteQuestionAlertDialog() {
-        deleteProductQuestionAlertDialog = new AlertDialog.Builder( this ).create();
+        setDeleteProductQuestionAlertDialog(new AlertDialog.Builder( this ).create());
         deleteProductQuestionAlertDialog.setTitle(
                 DO_YOU_WANT_TO_DELETE_A_PRODUCT_QUESTION_LABEL);
         deleteProductQuestionAlertDialog.setCancelable(false);
@@ -248,6 +259,9 @@ public class DeleteActivity extends AppCompatActivity {
 
     private void doDelete(DialogInterface dialog) {
         try {
+            if (busy) {
+                return;
+            }
             if (busyDeleting) {
                 return;
             }
@@ -255,7 +269,6 @@ public class DeleteActivity extends AppCompatActivity {
             SQLDeleteAsyncTask sqlDeleteAsyncTask = new SQLDeleteAsyncTask();
             sqlDeleteAsyncTask.execute();
             populateProductsListView();
-
         } catch (Exception e) {
             dialog.dismiss();
             errorAlertDialog.setMessage(EXCEPTION_LABEL+e);
@@ -264,7 +277,7 @@ public class DeleteActivity extends AppCompatActivity {
     }
 
     private void prepareOperationResultAlertDialog() {
-        operationResultAlertDialog = new AlertDialog.Builder(this).create();
+        setOperationResultAlertDialog(new AlertDialog.Builder(this).create());
         operationResultAlertDialog.setTitle(DATABASE_OPERATION_LABEL);
         operationResultAlertDialog.setMessage(PRODUCT_DELETED_LABEL);
         operationResultAlertDialog.setCancelable(false);
@@ -281,12 +294,11 @@ public class DeleteActivity extends AppCompatActivity {
     void populateProductsListView() {
         if (busy) return;
         busy = true;
-        progressDialog.show();
-
-
-        SQLSelectAsyncTask sTask = new SQLSelectAsyncTask();
-
+        if (!progressDialog.isShowing()) {
+            progressDialog.show();
+        }
         try {
+            SQLSelectAsyncTask sTask = new SQLSelectAsyncTask();
             sTask.execute();
         } catch (Exception e) {
             errorAlertDialog.setMessage(EXCEPTION_LABEL+e);
@@ -295,12 +307,7 @@ public class DeleteActivity extends AppCompatActivity {
         }
     }
 
-
-
     class SQLSelectAsyncTask extends AsyncTask<Void[], Void, ArrayList<Product>> {
-
-
-        private boolean error = false;
 
         public ArrayList<Product> doInBackground(Void[]... params) {
             ArrayList<Product> result = null;
@@ -310,7 +317,7 @@ public class DeleteActivity extends AppCompatActivity {
                 result = jdbcDatabaseHelper.doSelect(deleteQueryEditText.getText().toString());
 
             } catch (Exception e) {
-                error = true;
+                setBusy(true);
                 errorAlertDialog.setMessage(EXCEPTION_LABEL+e);
 
             }
@@ -320,6 +327,7 @@ public class DeleteActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(ArrayList<Product> products) {
             super.onPostExecute(products);
+            // handle exceptions
             if (error) {
                 errorAlertDialog.show();
                 error = false;
@@ -329,18 +337,18 @@ public class DeleteActivity extends AppCompatActivity {
                 return;
             }
 
+            // we do not want clicks to queue, thus we 'swallow' unneeded
+            // extra ones.
+            busy = false;
 
+            // updating GUI
+            progressDialog.dismiss();
             ProductAdapter productAdapter = new ProductAdapter(context, products);
             productsListView.setAdapter(productAdapter);
-            busy = false;
-            progressDialog.dismiss();
+            doQueryButton.setVisibility(View.VISIBLE);
 
-
-
-
-
+            // attaching itemclick handler to products list view.
             productsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
                 public void onItemClick(AdapterView<?> parent, View v, int position,
                                         long id) {
                     Product p = (Product) parent.getItemAtPosition(position);
@@ -348,28 +356,14 @@ public class DeleteActivity extends AppCompatActivity {
                     deleteProductQuestionAlertDialog.setMessage(PRODUCT_NAME_LABEL +p.name+"\n"+
                             PRODUCT_QUANTITY_LABEL +p.amount);
                     deleteProductQuestionAlertDialog.show();
-
-
                 }
             });
-
-
-
-            doQueryButton.setVisibility(View.VISIBLE);
-
         }
-
     }
 
     class SQLDeleteAsyncTask extends AsyncTask<Integer[], Integer, ArrayList<Product>> {
-
-
-        private boolean error = false;
-
-
         public ArrayList<Product> doInBackground(Integer[]... params) {
 
-            busy = true;
             ArrayList<Product> result = null;
             if (!progressDialog.isShowing()) {
                 progressDialog.show();
@@ -386,22 +380,24 @@ public class DeleteActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(ArrayList<Product> products) {
             super.onPostExecute(products);
-            if (error) {
+
+            // handling exceptions
+            if (isError()) {
                 errorAlertDialog.show();
-                error = false;
+                setError(false);
                 progressDialog.dismiss();
 
                 return;
             }
-            progressDialog.dismiss();
 
+            // updating GUI
+            progressDialog.dismiss();
             operationResultAlertDialog.show();
 
+            // we can handle clicks again
             busy = false;
             busyDeleting = false;
         }
-
     }
-
 }
 
