@@ -7,7 +7,7 @@
     android:fitsSystemWindows="true">
 
     <EditText
-        android:id="@+id/UserNameEditText"
+        android:id="@+id/SelectQueryEditText"
         android:layout_width="300dp"
         android:layout_height="100dp"
         android:layout_marginTop="100dp"
@@ -19,7 +19,7 @@
 
 
     <ListView
-        android:id="@+id/LV"
+        android:id="@+id/ProductsListView"
         android:layout_width="300dp"
         android:layout_height="400dp"
 

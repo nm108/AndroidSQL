@@ -145,8 +145,8 @@ public class SelectActivity extends AppCompatActivity {
     private void prepareView() {
         setContentView(R.layout.activity_select);
         setDoSelectSelectQueryButton(findViewById(R.id.DoSelectQueryButton));
-        setSelectQueryEditText(findViewById(R.id.UserNameEditText));
-        setProductsListView(findViewById(R.id.LV));
+        setSelectQueryEditText(findViewById(R.id.SelectQueryEditText));
+        setProductsListView(findViewById(R.id.ProductsListView));
         setReturnButton(findViewById(R.id.ReturnButton));
 
         getDoSelectSelectQueryButton().setOnClickListener(
