@@ -26,9 +26,9 @@ public class SelectActivity extends AppCompatActivity {
 
     /* State */
 
-    public static final String PRODUCT_INSERTED_LABEL = "Product Inserted";
     public static final String OK_LABEL = "Ok";
     public static final String PLEASE_WAIT_LABEL = "Please Wait.";
+    public static final String EXCEPTION_LABEL = "Exception: ";
     private Button doSelectSelectQueryButton;
     private EditText selectQueryEditText;
     private ProgressDialog progressDialog;
@@ -38,12 +38,12 @@ public class SelectActivity extends AppCompatActivity {
 
     private String exceptionMessageString = "";
 
-    private AlertDialog alertDialog;
+    private AlertDialog errorAlertDialog;
 
     private boolean busy = false;
 
-    private Context c;
-    private View v;
+    private Context context;
+    private View view;
 
 
     /* Accessors */
@@ -52,7 +52,7 @@ public class SelectActivity extends AppCompatActivity {
         return doSelectSelectQueryButton;
     }
 
-    public void setDoSelectSelectQueryButton(Button doSelectSelectQueryButton) {
+    public void setDoSelectSelectQueryButton(final Button doSelectSelectQueryButton) {
         this.doSelectSelectQueryButton = doSelectSelectQueryButton;
     }
 
@@ -60,7 +60,7 @@ public class SelectActivity extends AppCompatActivity {
         return selectQueryEditText;
     }
 
-    public void setSelectQueryEditText(EditText selectQueryEditText) {
+    public void setSelectQueryEditText(final EditText selectQueryEditText) {
         this.selectQueryEditText = selectQueryEditText;
     }
 
@@ -68,7 +68,7 @@ public class SelectActivity extends AppCompatActivity {
         return progressDialog;
     }
 
-    public void setProgressDialog(ProgressDialog progressDialog) {
+    public void setProgressDialog(final ProgressDialog progressDialog) {
         this.progressDialog = progressDialog;
     }
 
@@ -76,7 +76,7 @@ public class SelectActivity extends AppCompatActivity {
         return productsListView;
     }
 
-    public void setProductsListView(ListView productsListView) {
+    public void setProductsListView(final ListView productsListView) {
         this.productsListView = productsListView;
     }
 
@@ -84,7 +84,7 @@ public class SelectActivity extends AppCompatActivity {
         return returnButton;
     }
 
-    public void setReturnButton(Button returnButton) {
+    public void setReturnButton(final Button returnButton) {
         this.returnButton = returnButton;
     }
 
@@ -92,40 +92,40 @@ public class SelectActivity extends AppCompatActivity {
         return exceptionMessageString;
     }
 
-    public void setExceptionMessageString(String exceptionMessageString) {
+    public void setExceptionMessageString(final String exceptionMessageString) {
         this.exceptionMessageString = exceptionMessageString;
     }
 
-    public AlertDialog getAlertDialog() {
-        return alertDialog;
+    public AlertDialog getErrorAlertDialog() {
+        return errorAlertDialog;
     }
 
-    public void setAlertDialog(AlertDialog alertDialog) {
-        this.alertDialog = alertDialog;
+    public void setErrorAlertDialog(final AlertDialog errorAlertDialog) {
+        this.errorAlertDialog = errorAlertDialog;
     }
 
     public boolean isBusy() {
         return busy;
     }
 
-    public void setBusy(boolean busy) {
+    public void setBusy(final boolean busy) {
         this.busy = busy;
     }
 
-    public Context getC() {
-        return c;
+    public Context getContext() {
+        return context;
     }
 
-    public void setC(Context c) {
-        this.c = c;
+    public void setContext(final Context context) {
+        this.context = context;
     }
 
-    public View getV() {
-        return v;
+    public View getView() {
+        return view;
     }
 
-    public void setV(View v) {
-        this.v = v;
+    public void setView(final View view) {
+        this.view = view;
     }
 
 
@@ -133,32 +133,16 @@ public class SelectActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        c = this;
-
+        setContext(this);
         prepareView();
-    }
-
-    private void prepareAlertDialog() {
-        alertDialog = new AlertDialog.Builder(this).create();
-        alertDialog.setTitle(PRODUCT_INSERTED_LABEL);
-        alertDialog.setCancelable(false);
-        alertDialog.setCanceledOnTouchOutside(false);
-        alertDialog.setButton(
-                AlertDialog.BUTTON_NEUTRAL, (CharSequence) OK_LABEL,
-                (DialogInterface.OnClickListener) (dialog, which) ->
-
-                {
-                    dialog.dismiss();
-                    switchActivityToMain();
-                });
     }
 
     private void prepareView() {
         setContentView(R.layout.activity_select);
-        doSelectSelectQueryButton = findViewById(R.id.DoSelectQueryButton);
-        selectQueryEditText = findViewById(R.id.UserNameEditText);
-        productsListView = findViewById(R.id.LV);
-        returnButton = findViewById(R.id.ReturnButton);
+        setDoSelectSelectQueryButton(findViewById(R.id.DoSelectQueryButton));
+        setSelectQueryEditText(findViewById(R.id.UserNameEditText));
+        setProductsListView(findViewById(R.id.LV));
+        setReturnButton(findViewById(R.id.ReturnButton));
 
         doSelectSelectQueryButton.setOnClickListener(
                 this::selectQueryClickHandler
@@ -168,11 +152,10 @@ public class SelectActivity extends AppCompatActivity {
                 (final View v) -> {
                     switchActivityToMain();
                 }
-
         );
 
         prepareProgressDialog();
-        prepareAlertDialog();
+        prepareErrorAlertDialog();
     }
 
     private void prepareProgressDialog() {
@@ -183,63 +166,66 @@ public class SelectActivity extends AppCompatActivity {
     }
 
     private void switchActivityToMain() {
-        Intent switchActivityIntent = new Intent(this, MainActivity.class);
+        final Intent switchActivityIntent = new Intent(this, MainActivity.class);
         startActivity(switchActivityIntent);
     }
 
 
 
-    public void selectQueryClickHandler(View v) {
+    public void selectQueryClickHandler(final View v) {
         // we do not want button clicks queueing, so we just 'swallow'
         // unneeded extra ones.
-        if (busy) return;
-        busy = true;
+        if (isBusy()) return;
+        setBusy(true);
 
-
+        // informing user that we are busy
         progressDialog.show();
 
-        SqlSelectAsyncTask sTask = new SqlSelectAsyncTask();
-        Integer[] sarr = new Integer[]{};
-        ArrayList<Product> data = new ArrayList<Product>();
+        // querying Database (SELECT Operation).
         try {
+            final SqlSelectAsyncTask sTask = new SqlSelectAsyncTask();
             sTask.execute();
-            // Wait for this worker thread’s notification
-//                    sTask.wait();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        alertDialog = new AlertDialog.Builder(this).create();
-        alertDialog.setTitle("Exception");
-        alertDialog.setCancelable(false);
-        alertDialog.setCanceledOnTouchOutside(false);
-        alertDialog.setButton(
-                AlertDialog.BUTTON_NEUTRAL, (CharSequence) "Ok",
-                (DialogInterface.OnClickListener) (dialog, which) ->
 
+        // to be continued when async task will call us back.
+    }
+
+    private void prepareErrorAlertDialog() {
+        errorAlertDialog = new AlertDialog.Builder(this).create();
+        errorAlertDialog.setTitle(EXCEPTION_LABEL);
+        errorAlertDialog.setCancelable(false);
+        errorAlertDialog.setCanceledOnTouchOutside(false);
+        errorAlertDialog.setButton(
+                AlertDialog.BUTTON_NEUTRAL, (CharSequence) OK_LABEL,
+                (DialogInterface.OnClickListener) (dialog, which) ->
                 {
                     dialog.dismiss();
                     switchActivityToMain();
                 });
-
-
-
-//
-
-
-                                  }
-
-
+    }
 
 
     class SqlSelectAsyncTask extends AsyncTask<List[], Void, ArrayList<Product>> {
+        private boolean error = false;
+
+        public boolean isError() {
+            return error;
+        }
+
+        public void setError(boolean error) {
+            this.error = error;
+        }
 
         public ArrayList<Product> doInBackground(List[]... params) {
             ArrayList<Product> result = null;
 
-            JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper(c);
+            final JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper(context);
             try {
                 result = jdbcDatabaseHelper.doSelect(selectQueryEditText.getText().toString());
             } catch (Exception e) {
+                setError(true);
                 exceptionMessageString = e.toString();
                 return null;
             }
@@ -249,20 +235,21 @@ public class SelectActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(ArrayList<Product> products) {
             super.onPostExecute(products);
-            if (products == null) {
-                alertDialog.setMessage("Exception: "+exceptionMessageString);
-                alertDialog.show();
-                busy = false;
+            if (isError()) {
+                errorAlertDialog.setMessage(EXCEPTION_LABEL+exceptionMessageString);
+                errorAlertDialog.show();
+                setBusy(false);
+                setError(false);
                 progressDialog.dismiss();
                 return;
             }
 
-            ProductAdapter pa = new ProductAdapter(c, products);
-            productsListView.setAdapter(pa);
+            final ProductAdapter pa = new ProductAdapter(context, products);
+            getProductsListView().setAdapter(pa);
 
-            busy = false;
+            setBusy(false);
+
             progressDialog.dismiss();
-
         }
 
     }
