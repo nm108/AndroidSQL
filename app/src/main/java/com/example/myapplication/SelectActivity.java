@@ -198,7 +198,7 @@ public class SelectActivity extends AppCompatActivity {
 
         progressDialog.show();
 
-        sqlSelectAsyncTask sTask = new sqlSelectAsyncTask();
+        SqlSelectAsyncTask sTask = new SqlSelectAsyncTask();
         Integer[] sarr = new Integer[]{};
         ArrayList<Product> data = new ArrayList<Product>();
         try {
@@ -231,7 +231,7 @@ public class SelectActivity extends AppCompatActivity {
 
 
 
-    class sqlSelectAsyncTask extends AsyncTask<List[], Void, ArrayList<Product>> {
+    class SqlSelectAsyncTask extends AsyncTask<List[], Void, ArrayList<Product>> {
 
         public ArrayList<Product> doInBackground(List[]... params) {
             ArrayList<Product> result = null;
