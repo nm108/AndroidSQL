@@ -237,29 +237,30 @@ public class DeleteActivity extends AppCompatActivity {
         deleteProductQuestionAlertDialog.setButton(
                 AlertDialog.BUTTON_POSITIVE, (CharSequence) DELETE_LABEL,
                 (DialogInterface.OnClickListener) (dialog, which) -> {
-                    try {
-                        if (busyDeleting) {
-                            return;
-                        }
-                        busyDeleting = true;
-                        SQLDeleteAsyncTask sqlDeleteAsyncTask = new SQLDeleteAsyncTask();
-                        sqlDeleteAsyncTask.execute();
-                        populateProductsListView();
-
-
-                        dialog.dismiss();
-                    } catch (Exception e) {
-                        dialog.dismiss();
-                        errorAlertDialog.setMessage(EXCEPTION_LABEL+e);
-                        errorAlertDialog.show();
-                    }
-
+                    doDelete(dialog);
                 });
         deleteProductQuestionAlertDialog.setButton(
                 AlertDialog.BUTTON_NEGATIVE, CANCEL_LABEL,
                 (DialogInterface.OnClickListener) (dialog, which) -> {
                     dialog.dismiss();
                 });
+    }
+
+    private void doDelete(DialogInterface dialog) {
+        try {
+            if (busyDeleting) {
+                return;
+            }
+            busyDeleting = true;
+            SQLDeleteAsyncTask sqlDeleteAsyncTask = new SQLDeleteAsyncTask();
+            sqlDeleteAsyncTask.execute();
+            populateProductsListView();
+
+        } catch (Exception e) {
+            dialog.dismiss();
+            errorAlertDialog.setMessage(EXCEPTION_LABEL+e);
+            errorAlertDialog.show();
+        }
     }
 
     private void prepareOperationResultAlertDialog() {
