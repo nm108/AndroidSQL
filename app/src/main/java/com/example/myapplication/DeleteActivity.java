@@ -52,7 +52,6 @@ public class DeleteActivity extends AppCompatActivity {
 
     private boolean busyDeleting;
 
-    private boolean error = false;
     private boolean busy = false;
 
     private EditText deleteQueryEditText;
@@ -131,14 +130,6 @@ public class DeleteActivity extends AppCompatActivity {
 
     public void setBusyDeleting(boolean busyDeleting) {
         this.busyDeleting = busyDeleting;
-    }
-
-    public boolean isError() {
-        return error;
-    }
-
-    public void setError(boolean error) {
-        this.error = error;
     }
 
     public boolean isBusy() {
@@ -307,6 +298,9 @@ public class DeleteActivity extends AppCompatActivity {
 
     class SQLSelectAsyncTask extends AsyncTask<Void[], Void, ArrayList<Product>> {
 
+
+        private boolean error = false;
+
         public ArrayList<Product> doInBackground(Void[]... params) {
             ArrayList<Product> result = null;
 
@@ -368,6 +362,10 @@ public class DeleteActivity extends AppCompatActivity {
 
     class SQLDeleteAsyncTask extends AsyncTask<Integer[], Integer, ArrayList<Product>> {
 
+
+        private boolean error = false;
+
+
         public ArrayList<Product> doInBackground(Integer[]... params) {
 
             busy = true;
@@ -375,7 +373,6 @@ public class DeleteActivity extends AppCompatActivity {
             if (!progressDialog.isShowing()) {
                 progressDialog.show();
             }
-//            pd.show();
             try {
                 new JDBCDatabaseHelper(context).doDelete(productIdToDelete);
             } catch (Exception e) {
