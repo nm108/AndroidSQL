@@ -29,6 +29,7 @@ public class DeleteActivity extends AppCompatActivity {
     public static final String DELETE_LABEL = "Delete";
     public static final String PLEASE_WAIT_LABEL = "Please Wait.";
     public static final String EXCEPTION_OCCURED_LABEL = "Exception Occured";
+    public static final int WAIT_LENGTH = 200;
 
     /* State */
 
@@ -303,7 +304,7 @@ public class DeleteActivity extends AppCompatActivity {
     private void refreshListView() {
         try {
             while (notYetDeleted) {
-                Thread.currentThread().wait(100);
+                Thread.currentThread().wait(WAIT_LENGTH);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
