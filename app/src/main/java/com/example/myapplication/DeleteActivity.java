@@ -18,6 +18,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 
 public class DeleteActivity extends AppCompatActivity {
+    public static final String EXCEPTION_LABEL = "Exception: ";
+    public static final String PRODUCT_NAME_LABEL = "Product Name: ";
+    public static final String PRODUCT_QUANTITY_LABEL = "Product Quantity: ";
+    public static final String OK_LABEL = "Ok";
+    public static final String DATABASE_OPERATION_LABEL = "Database Operation";
+    public static final String PRODUCT_DELETED_LABEL = "Product Deleted";
+    public static final String CANCEL_LABEL = "Cancel";
+    public static final String DO_YOU_WANT_TO_DELETE_A_PRODUCT_QUESTION_LABEL = "Do you want to Delete a Product?";
+    public static final String DELETE_LABEL = "Delete";
+    public static final String PLEASE_WAIT_LABEL = "Please Wait.";
+    public static final String EXCEPTION_OCCURED_LABEL = "Exception Occured";
 
     /* State */
 
@@ -165,12 +176,12 @@ public class DeleteActivity extends AppCompatActivity {
 
     private void prepareErrorAlertDialog() {
         errorAlertDialog = new AlertDialog.Builder(this).create();
-        errorAlertDialog.setTitle("Exception Occured");
+        errorAlertDialog.setTitle(EXCEPTION_OCCURED_LABEL);
         errorAlertDialog.setCancelable(false);
         errorAlertDialog.setCanceledOnTouchOutside(false);
-        errorAlertDialog.setMessage("Exception: ");
+        errorAlertDialog.setMessage(EXCEPTION_LABEL);
         errorAlertDialog.setButton(
-                AlertDialog.BUTTON_NEUTRAL, (CharSequence)  "Ok",
+                AlertDialog.BUTTON_NEUTRAL, (CharSequence)  OK_LABEL,
                 (DialogInterface.OnClickListener) (dialog, which) -> {
                     dialog.dismiss();
                     switchActivityToMain();
@@ -212,12 +223,13 @@ public class DeleteActivity extends AppCompatActivity {
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
         progressDialog.setCanceledOnTouchOutside(false);
-        progressDialog.setMessage("Please Wait.");
+        progressDialog.setMessage(PLEASE_WAIT_LABEL);
     }
 
 
     private void switchActivityToMain() {
-        Intent switchActivityIntent = new Intent(this, MainActivity.class);
+        Intent switchActivityIntent = new Intent(this,
+                MainActivity.class);
         startActivity(switchActivityIntent);
     }
 
@@ -227,11 +239,12 @@ public class DeleteActivity extends AppCompatActivity {
 
     private void prepareDeleteQuestionAlertDialog() {
         deleteProductQuestionAlertDialog = new AlertDialog.Builder( this ).create();
-        deleteProductQuestionAlertDialog.setTitle("Do you want to Delete a Product?");
+        deleteProductQuestionAlertDialog.setTitle(
+                DO_YOU_WANT_TO_DELETE_A_PRODUCT_QUESTION_LABEL);
         deleteProductQuestionAlertDialog.setCancelable(false);
         deleteProductQuestionAlertDialog.setCanceledOnTouchOutside(false);
         deleteProductQuestionAlertDialog.setButton(
-                AlertDialog.BUTTON_POSITIVE, (CharSequence) "Delete",
+                AlertDialog.BUTTON_POSITIVE, (CharSequence) DELETE_LABEL,
                 (DialogInterface.OnClickListener) (dialog, which) -> {
                     try {
                         if (busyDeleting) {
@@ -246,13 +259,13 @@ public class DeleteActivity extends AppCompatActivity {
                         dialog.dismiss();
                     } catch (Exception e) {
                         dialog.dismiss();
-                        errorAlertDialog.setMessage("Exception: "+e);
+                        errorAlertDialog.setMessage(EXCEPTION_LABEL+e);
                         errorAlertDialog.show();
                     }
 
                 });
         deleteProductQuestionAlertDialog.setButton(
-                AlertDialog.BUTTON_NEGATIVE, "Cancel",
+                AlertDialog.BUTTON_NEGATIVE, CANCEL_LABEL,
                 (DialogInterface.OnClickListener) (dialog, which) -> {
                     dialog.dismiss();
                 });
@@ -260,12 +273,12 @@ public class DeleteActivity extends AppCompatActivity {
 
     private void prepareOperationResultAlertDialog() {
         operationResultAlertDialog = new AlertDialog.Builder(this).create();
-        operationResultAlertDialog.setTitle("Database Operation");
-        operationResultAlertDialog.setMessage("Product Deleted");
+        operationResultAlertDialog.setTitle(DATABASE_OPERATION_LABEL);
+        operationResultAlertDialog.setMessage(PRODUCT_DELETED_LABEL);
         operationResultAlertDialog.setCancelable(false);
         operationResultAlertDialog.setCanceledOnTouchOutside(false);
 
-        operationResultAlertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Ok",
+        operationResultAlertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, OK_LABEL,
                 (DialogInterface.OnClickListener)
                         (dia, wh) -> {
                     populateLV();
@@ -286,7 +299,7 @@ public class DeleteActivity extends AppCompatActivity {
         try {
             sTask.execute(sarr);
         } catch (Exception e) {
-            errorAlertDialog.setMessage("Exception: "+e);
+            errorAlertDialog.setMessage(EXCEPTION_LABEL+e);
             errorAlertDialog.show();
             return;
         }
@@ -305,7 +318,7 @@ public class DeleteActivity extends AppCompatActivity {
 
             } catch (Exception e) {
                 error = true;
-                errorAlertDialog.setMessage("Exception: "+e);
+                errorAlertDialog.setMessage(EXCEPTION_LABEL+e);
 
             }
             return result;
@@ -340,7 +353,8 @@ public class DeleteActivity extends AppCompatActivity {
                                         long id) {
                     Product p = (Product) parent.getItemAtPosition(position);
                     productIdToDelete = p.id;
-                    deleteProductQuestionAlertDialog.setMessage("Product Name: "+p.name+"\nProduct Quantity: "+p.amount);
+                    deleteProductQuestionAlertDialog.setMessage(PRODUCT_NAME_LABEL +p.name+"\n"+
+                            PRODUCT_QUANTITY_LABEL +p.amount);
                     deleteProductQuestionAlertDialog.show();
 
 
@@ -369,7 +383,7 @@ public class DeleteActivity extends AppCompatActivity {
                 new JDBCDatabaseHelper(context).doDelete(productIdToDelete);
             } catch (Exception e) {
                 error = true;
-                errorAlertDialog.setMessage("Exception: "+e);
+                errorAlertDialog.setMessage(EXCEPTION_LABEL +e);
             }
             return result;
         }
