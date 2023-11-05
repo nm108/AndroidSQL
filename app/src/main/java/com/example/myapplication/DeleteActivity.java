@@ -166,7 +166,7 @@ public class DeleteActivity extends AppCompatActivity {
     }
 
     private void prepareErrorAlertDialog() {
-        errorAlertDialog = new AlertDialog.Builder(this).create();
+        setErrorAlertDialog(new AlertDialog.Builder(this).create());
         errorAlertDialog.setTitle(EXCEPTION_OCCURED_LABEL);
         errorAlertDialog.setCancelable(false);
         errorAlertDialog.setCanceledOnTouchOutside(false);
@@ -182,23 +182,23 @@ public class DeleteActivity extends AppCompatActivity {
 
     private void prepareView() {
         setContentView(R.layout.activity_delete);
-        doQueryButton = findViewById(R.id.DeleteDoSelectQueryButton);
-        deleteQueryEditText = findViewById(R.id.DeleteQueryEditText);
-        productsListView = findViewById(R.id.DeleteLV);
-        returnButton = findViewById(R.id.DeleteReturnButton);
+        setDoQueryButton(findViewById(R.id.DeleteDoSelectQueryButton));
+        setDeleteQueryEditText(findViewById(R.id.DeleteQueryEditText));
+        setProductsListView(findViewById(R.id.DeleteLV));
+        setReturnButton(findViewById(R.id.DeleteReturnButton));
 
-        doQueryButton.setOnClickListener(
+        getDoQueryButton().setOnClickListener(
                 this::onClick
         );
 
-        returnButton.setOnClickListener(
+        getReturnButton().setOnClickListener(
                 (final View v) -> {
                     switchActivityToMain();
                 }
 
         );
 
-        returnButton.setOnClickListener(
+        getReturnButton().setOnClickListener(
                 (final View v) -> {
                     switchActivityToMain();
                 }
