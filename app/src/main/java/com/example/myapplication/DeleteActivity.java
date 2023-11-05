@@ -169,13 +169,18 @@ public class DeleteActivity extends AppCompatActivity {
 
     /* Methods */
 
+    /**
+     * @author Andrzej Wysocki (nm108)
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
 
         prepareView();
     }
-
+    /**
+     * @author Andrzej Wysocki (nm108)
+     */
     private void prepareErrorAlertDialog() {
         setErrorAlertDialog(new AlertDialog.Builder(this).create());
         errorAlertDialog.setTitle(EXCEPTION_OCCURED_LABEL);
@@ -191,6 +196,9 @@ public class DeleteActivity extends AppCompatActivity {
         );
     }
 
+    /**
+     * @author Andrzej Wysocki (nm108)
+     */
     private void prepareView() {
         setContentView(R.layout.activity_delete);
         setDoQueryButton(findViewById(R.id.DeleteDoSelectQueryButton));
@@ -221,6 +229,9 @@ public class DeleteActivity extends AppCompatActivity {
         prepareDeleteQuestionAlertDialog();
     }
 
+    /**
+     * @author Andrzej Wysocki (nm108)
+     */
     private void prepareProgressDialog() {
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
@@ -229,16 +240,24 @@ public class DeleteActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * @author Andrzej Wysocki (nm108)
+     */
     private void switchActivityToMain() {
         Intent switchActivityIntent = new Intent(this,
                 MainActivity.class);
         startActivity(switchActivityIntent);
     }
 
-    private void onClick(View v) {
+    /**
+     * @author Andrzej Wysocki (nm108)
+     */
+    private void onClick(final View v) {
         populateProductsListView();
     }
-
+    /**
+     * @author Andrzej Wysocki (nm108)
+     */
     private void prepareDeleteQuestionAlertDialog() {
         setDeleteProductQuestionAlertDialog(new AlertDialog.Builder( this ).create());
         deleteProductQuestionAlertDialog.setTitle(
@@ -256,7 +275,9 @@ public class DeleteActivity extends AppCompatActivity {
                     dialog.dismiss();
                 });
     }
-
+    /**
+     * @author Andrzej Wysocki (nm108)
+     */
     private void doDelete(DialogInterface dialog) {
         try {
             if (busy) {
@@ -276,6 +297,9 @@ public class DeleteActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * @author Andrzej Wysocki (nm108)
+     */
     private void prepareOperationResultAlertDialog() {
         setOperationResultAlertDialog(new AlertDialog.Builder(this).create());
         operationResultAlertDialog.setTitle(DATABASE_OPERATION_LABEL);
@@ -289,7 +313,9 @@ public class DeleteActivity extends AppCompatActivity {
                     dia.dismiss();
                 });
     }
-
+    /**
+     * @author Andrzej Wysocki (nm108)
+     */
     void populateProductsListView() {
         if (busy) return;
         busy = true;
@@ -404,6 +430,7 @@ public class DeleteActivity extends AppCompatActivity {
             // updating GUI
             progressDialog.dismiss();
             operationResultAlertDialog.show();
+
             populateProductsListView();
 
             // we can handle clicks again
