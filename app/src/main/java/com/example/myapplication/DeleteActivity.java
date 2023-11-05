@@ -15,12 +15,11 @@ import android.widget.ListView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class DeleteActivity extends AppCompatActivity {
 
-    private Button doDeleteQueryButton;
+    /* State */
 
     private Button doQueryButton;
 
@@ -28,44 +27,163 @@ public class DeleteActivity extends AppCompatActivity {
 
     private String productIdToDelete;
 
-    private AlertDialog dad;
+    private AlertDialog deleteProductQuestionAlertDialog;
 
-    private AlertDialog cad;
+    private AlertDialog operationResultAlertDialog;
 
-    private AlertDialog exceptionAd;
-
-
-    private Context c;
+    private AlertDialog errorAlertDialog;
 
 
-    private ProgressDialog pd;
+    private Context context;
+
+
+    private ProgressDialog progressDialog;
 
     private boolean busyDeleting;
 
-private boolean error = false;
+    private boolean error = false;
     private boolean busy = false;
 
-private EditText deleteQueryEditText;
+    private EditText deleteQueryEditText;
 
-    private ListView lv;
+    private ListView productsListView;
+
+    /* Accessors */
+
+    public Button getDoQueryButton() {
+        return doQueryButton;
+    }
+
+    public void setDoQueryButton(Button doQueryButton) {
+        this.doQueryButton = doQueryButton;
+    }
+
+    public Button getReturnButton() {
+        return returnButton;
+    }
+
+    public void setReturnButton(Button returnButton) {
+        this.returnButton = returnButton;
+    }
+
+    public String getProductIdToDelete() {
+        return productIdToDelete;
+    }
+
+    public void setProductIdToDelete(String productIdToDelete) {
+        this.productIdToDelete = productIdToDelete;
+    }
+
+    public AlertDialog getDeleteProductQuestionAlertDialog() {
+        return deleteProductQuestionAlertDialog;
+    }
+
+    public void setDeleteProductQuestionAlertDialog(AlertDialog deleteProductQuestionAlertDialog) {
+        this.deleteProductQuestionAlertDialog = deleteProductQuestionAlertDialog;
+    }
+
+    public AlertDialog getOperationResultAlertDialog() {
+        return operationResultAlertDialog;
+    }
+
+    public void setOperationResultAlertDialog(AlertDialog operationResultAlertDialog) {
+        this.operationResultAlertDialog = operationResultAlertDialog;
+    }
+
+    public AlertDialog getErrorAlertDialog() {
+        return errorAlertDialog;
+    }
+
+    public void setErrorAlertDialog(AlertDialog errorAlertDialog) {
+        this.errorAlertDialog = errorAlertDialog;
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
+    public ProgressDialog getProgressDialog() {
+        return progressDialog;
+    }
+
+    public void setProgressDialog(ProgressDialog progressDialog) {
+        this.progressDialog = progressDialog;
+    }
+
+    public boolean isBusyDeleting() {
+        return busyDeleting;
+    }
+
+    public void setBusyDeleting(boolean busyDeleting) {
+        this.busyDeleting = busyDeleting;
+    }
+
+    public boolean isError() {
+        return error;
+    }
+
+    public void setError(boolean error) {
+        this.error = error;
+    }
+
+    public boolean isBusy() {
+        return busy;
+    }
+
+    public void setBusy(boolean busy) {
+        this.busy = busy;
+    }
+
+    public EditText getDeleteQueryEditText() {
+        return deleteQueryEditText;
+    }
+
+    public void setDeleteQueryEditText(EditText deleteQueryEditText) {
+        this.deleteQueryEditText = deleteQueryEditText;
+    }
+
+    public ListView getProductsListView() {
+        return productsListView;
+    }
+
+    public void setProductsListView(ListView productsListView) {
+        this.productsListView = productsListView;
+    }
+
+    /* Methods */
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = this;
 
-        c = this;
-        pd = new ProgressDialog(this);
-        pd.setCancelable(false);
-        pd.setCanceledOnTouchOutside(false);
-        pd.setMessage("Please Wait.");
+        prepareView();
+    }
 
+    private void prepareAlertDialog() {
+        errorAlertDialog = new AlertDialog.Builder(this).create();
+        errorAlertDialog.setTitle("Exception Occured");
+        errorAlertDialog.setCancelable(false);
+        errorAlertDialog.setCanceledOnTouchOutside(false);
+        errorAlertDialog.setMessage("Exception: ");
+        errorAlertDialog.setButton(
+                AlertDialog.BUTTON_NEUTRAL, (CharSequence)  "Ok",
+                (DialogInterface.OnClickListener) (dialog, which) -> {
+                    dialog.dismiss();
+                    switchActivities();
+                }
+        );
+    }
+
+    private void prepareView() {
         setContentView(R.layout.activity_delete);
         doQueryButton = findViewById(R.id.DeleteDoSelectQueryButton);
         deleteQueryEditText = findViewById(R.id.DeleteQueryEditText);
-
-        lv = findViewById(R.id.DeleteLV);
-
+        productsListView = findViewById(R.id.DeleteLV);
         returnButton = findViewById(R.id.DeleteReturnButton);
-
 
         doQueryButton.setOnClickListener(
                 this::onClick
@@ -78,29 +196,21 @@ private EditText deleteQueryEditText;
 
         );
 
-//        doSelectQueryButton.setClickable(true);
-
         returnButton.setOnClickListener(
                 (final View v) -> {
                     switchActivities();
                 }
-
         );
 
-        exceptionAd = new AlertDialog.Builder(this).create();
-        exceptionAd.setTitle("Exception Occured");
-        exceptionAd.setCancelable(false);
-        exceptionAd.setCanceledOnTouchOutside(false);
-        exceptionAd.setMessage("Exception: ");
-        exceptionAd.setButton(
-                AlertDialog.BUTTON_NEUTRAL, (CharSequence)  "Ok",
-                (DialogInterface.OnClickListener) (dialog, which) -> {
-                    dialog.dismiss();
-                    switchActivities();
-                }
-        );
+        prepareProgressDialog();
+        prepareAlertDialog();
+    }
 
-
+    private void prepareProgressDialog() {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setMessage("Please Wait.");
     }
 
 
@@ -115,11 +225,11 @@ populateLV();
 
 
 
-        dad = new AlertDialog.Builder( this ).create();
-        dad.setTitle("Do you want to Delete a Product?");
-        dad.setCancelable(false);
-        dad.setCanceledOnTouchOutside(false);
-        dad.setButton(
+        deleteProductQuestionAlertDialog = new AlertDialog.Builder( this ).create();
+        deleteProductQuestionAlertDialog.setTitle("Do you want to Delete a Product?");
+        deleteProductQuestionAlertDialog.setCancelable(false);
+        deleteProductQuestionAlertDialog.setCanceledOnTouchOutside(false);
+        deleteProductQuestionAlertDialog.setButton(
                 AlertDialog.BUTTON_POSITIVE, (CharSequence) "Delete",
                 (DialogInterface.OnClickListener) (dialog, which) -> {
                     try {
@@ -130,28 +240,28 @@ populateLV();
                         SQLDeleteTask sqlDeleteTask = new SQLDeleteTask();
                         sqlDeleteTask.execute();
                         populateLV();
-                        cad = new AlertDialog.Builder(this).create();
-                        cad.setTitle("Database Operation");
-                        cad.setMessage("Product Deleted");
-                        cad.setCancelable(false);
-                        cad.setCanceledOnTouchOutside(false);
+                        operationResultAlertDialog = new AlertDialog.Builder(this).create();
+                        operationResultAlertDialog.setTitle("Database Operation");
+                        operationResultAlertDialog.setMessage("Product Deleted");
+                        operationResultAlertDialog.setCancelable(false);
+                        operationResultAlertDialog.setCanceledOnTouchOutside(false);
 
-                        cad.setButton(AlertDialog.BUTTON_NEUTRAL, "Ok",
+                        operationResultAlertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Ok",
                                 (DialogInterface.OnClickListener)
                                         (dia, wh) -> {
                                     populateLV();
                                     dia.dismiss();
                                 });
-                        cad.show();
+                        operationResultAlertDialog.show();
                         dialog.dismiss();
                     } catch (Exception e) {
                         dialog.dismiss();
-                        exceptionAd.setMessage("Exception: "+e);
-                        exceptionAd.show();
+                        errorAlertDialog.setMessage("Exception: "+e);
+                        errorAlertDialog.show();
                     }
 
                 });
-        dad.setButton(
+        deleteProductQuestionAlertDialog.setButton(
                 AlertDialog.BUTTON_NEGATIVE, "Cancel",
                 (DialogInterface.OnClickListener) (dialog, which) -> {
                     dialog.dismiss();
@@ -163,7 +273,7 @@ populateLV();
     void populateLV() {
         if (busy) return;
         busy = true;
-        pd.show();
+        progressDialog.show();
 
 
         DeleteActivity.SQLTask sTask = new DeleteActivity.SQLTask();
@@ -176,8 +286,8 @@ populateLV();
 
             sTask.execute(sarr);
         } catch (Exception e) {
-            exceptionAd.setMessage("Exception: "+e);
-            exceptionAd.show();
+            errorAlertDialog.setMessage("Exception: "+e);
+            errorAlertDialog.show();
             return;
         }
 
@@ -203,13 +313,13 @@ populateLV();
         public ArrayList<Product> doInBackground(Integer[]... params) {
             ArrayList<Product> result = null;
 
-            JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper(c);
+            JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper(context);
             try {
                 result = jdbcDatabaseHelper.doSelect(deleteQueryEditText.getText().toString());
 
             } catch (Exception e) {
                 error = true;
-                exceptionAd.setMessage("Exception: "+e);
+                errorAlertDialog.setMessage("Exception: "+e);
 
             }
             return result;
@@ -219,34 +329,34 @@ populateLV();
         protected void onPostExecute(ArrayList<Product> products) {
             super.onPostExecute(products);
             if (error) {
-                exceptionAd.show();
+                errorAlertDialog.show();
                 error = false;
-                pd.dismiss();
+                progressDialog.dismiss();
                 doQueryButton.setVisibility(View.VISIBLE);
                 busy = false;
                 return;
             }
-            ProductAdapter pa = new ProductAdapter(c, products);
-            lv.setAdapter(pa);
+            ProductAdapter pa = new ProductAdapter(context, products);
+            productsListView.setAdapter(pa);
             busy = false;
-            pd.dismiss();
+            progressDialog.dismiss();
 
 
-            ProductAdapter adapter = new ProductAdapter(c, products);
+            ProductAdapter adapter = new ProductAdapter(context, products);
 
-            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            productsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
                 public void onItemClick(AdapterView<?> parent, View v, int position,
                                         long id) {
                     Product p = (Product) parent.getItemAtPosition(position);
                     productIdToDelete = p.id;
-                    dad.setMessage("Product Name: "+p.name+"\nProduct Quantity: "+p.amount);
-                    dad.show();
+                    deleteProductQuestionAlertDialog.setMessage("Product Name: "+p.name+"\nProduct Quantity: "+p.amount);
+                    deleteProductQuestionAlertDialog.show();
 
 
                 }
             });
-            lv.setAdapter(adapter);
+            productsListView.setAdapter(adapter);
             doQueryButton.setVisibility(View.VISIBLE);
 
         }
@@ -259,15 +369,15 @@ populateLV();
 
             busy = true;
             ArrayList<Product> result = null;
-            if (!pd.isShowing()) {
-                pd.show();
+            if (!progressDialog.isShowing()) {
+                progressDialog.show();
             }
 //            pd.show();
             try {
-                new JDBCDatabaseHelper(c).doDelete(productIdToDelete);
+                new JDBCDatabaseHelper(context).doDelete(productIdToDelete);
             } catch (Exception e) {
                 error = true;
-                exceptionAd.setMessage("Exception: "+e);
+                errorAlertDialog.setMessage("Exception: "+e);
             }
             return result;
         }
@@ -276,13 +386,13 @@ populateLV();
         protected void onPostExecute(ArrayList<Product> products) {
             super.onPostExecute(products);
             if (error) {
-                exceptionAd.show();
+                errorAlertDialog.show();
                 error = false;
-                pd.dismiss();
+                progressDialog.dismiss();
 
                 return;
             }
-            pd.dismiss();
+            progressDialog.dismiss();
 //            doQueryButton.setVisibility(View.VISIBLE);
             busy = false;
             busyDeleting = false;
