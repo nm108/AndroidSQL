@@ -198,9 +198,9 @@ public class UpdateActivity extends AppCompatActivity {
                 p = (Product) parent.getItemAtPosition(position);
 
                 originalProductTextView.setVisibility(View.VISIBLE);
-                originalProductTextView.setText("Original Product id: "+p.id+"" +
-                        "\nOriginal Product name: "+p.name+"" +
-                        "\nOriginal Product quantity: "+p.amount);
+                originalProductTextView.setText("Original Product id: "+p.getId()+"" +
+                        "\nOriginal Product name: "+p.getName()+"" +
+                        "\nOriginal Product quantity: "+p.getAmount());
                 queryEditText.setVisibility(View.GONE);
                 lv.setVisibility(View.GONE);
                 doUpdateQueryButton.setVisibility(View.GONE);
@@ -280,7 +280,7 @@ public class UpdateActivity extends AppCompatActivity {
             }
 
             try {
-                jdbcDatabaseHelper.doUpdate(p.id,
+                jdbcDatabaseHelper.doUpdate(p.getId(),
                         newProductName, newProductAmount);
             } catch (Exception e) {
                 exceptionAD.setMessage(e.toString());

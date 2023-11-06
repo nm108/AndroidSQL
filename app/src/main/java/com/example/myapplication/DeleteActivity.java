@@ -36,7 +36,7 @@ public class DeleteActivity extends AppCompatActivity {
     public static final String DELETE_LABEL = "Delete";
     public static final String PLEASE_WAIT_LABEL = "Please Wait.";
     public static final String EXCEPTION_OCCURED_LABEL = "Exception Occured";
-    public static final int WAIT_LENGTH = 200;
+    public static final int WAIT_LENGTH = 1000;
 
     /* State */
 
@@ -317,7 +317,7 @@ public class DeleteActivity extends AppCompatActivity {
     private void refreshListView() {
         try {
             while (notYetDeleted) {
-                Thread.sleep(1000);
+                Thread.sleep(WAIT_LENGTH);
             }
         } catch (InterruptedException ie) {
             populateProductsListView();
@@ -413,9 +413,9 @@ public class DeleteActivity extends AppCompatActivity {
                 public void onItemClick(AdapterView<?> parent, View v, int position,
                                         long id) {
                     final Product p = (Product) parent.getItemAtPosition(position);
-                    productIdToDelete = p.id;
-                    deleteProductQuestionAlertDialog.setMessage(PRODUCT_NAME_LABEL +p.name+"\n"+
-                            PRODUCT_QUANTITY_LABEL +p.amount);
+                    setProductIdToDelete(p.getId());
+                    deleteProductQuestionAlertDialog.setMessage(PRODUCT_NAME_LABEL +p.getName()+"\n"+
+                            PRODUCT_QUANTITY_LABEL +p.getAmount());
                     deleteProductQuestionAlertDialog.show();
                 }
             });
