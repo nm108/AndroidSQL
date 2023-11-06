@@ -301,6 +301,12 @@ public class DeleteActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * We want to refresh list view AFTER product deletion completes
+     *
+     * We sleep until product deletion is completed, then populate
+     * products list view
+     */
     private void refreshListView() {
         try {
             while (notYetDeleted) {
@@ -308,6 +314,7 @@ public class DeleteActivity extends AppCompatActivity {
             }
         } catch (InterruptedException ie) {
             populateProductsListView();
+            return;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
