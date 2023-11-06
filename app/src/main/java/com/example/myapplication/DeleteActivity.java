@@ -60,16 +60,11 @@ public class DeleteActivity extends AppCompatActivity {
 
     private boolean busyDeleting;
 
-    private boolean busy = false;
-
     private EditText deleteQueryEditText;
 
     private ListView productsListView;
 
     private boolean error = false;
-
-    private boolean notYetDeleted = false;
-
 
     /* Accessors */
 
@@ -153,14 +148,6 @@ public class DeleteActivity extends AppCompatActivity {
         this.error = error;
     }
 
-    public boolean isBusy() {
-        return busy;
-    }
-
-    public void setBusy(final boolean busy) {
-        this.busy = busy;
-    }
-
     public EditText getDeleteQueryEditText() {
         return deleteQueryEditText;
     }
@@ -175,14 +162,6 @@ public class DeleteActivity extends AppCompatActivity {
 
     public void setProductsListView(final ListView productsListView) {
         this.productsListView = productsListView;
-    }
-
-    public boolean isNotYetDeleted() {
-        return notYetDeleted;
-    }
-
-    public void setNotYetDeleted(boolean notYetDeleted) {
-        this.notYetDeleted = notYetDeleted;
     }
 
     /* Methods */
@@ -298,9 +277,6 @@ public class DeleteActivity extends AppCompatActivity {
      */
     private void doDelete(final DialogInterface dialog) {
         try {
-            if (isBusy()) {
-                return;
-            }
             if (isBusyDeleting()) {
                 return;
             }
@@ -345,8 +321,6 @@ public class DeleteActivity extends AppCompatActivity {
      * @author Andrzej Wysocki (nm108)
      */
     void populateProductsListView() {
-        if (isBusy()) return;
-        setBusy(true);
         if (!getProgressDialog().isShowing()) {
             getProgressDialog().show();
         }
@@ -375,7 +349,6 @@ public class DeleteActivity extends AppCompatActivity {
             try {
                 result = jdbcDatabaseHelper.doSelect(deleteQueryEditText.getText().toString());
             } catch (Exception e) {
-                setBusy(true);
                 getErrorAlertDialog().setMessage(EXCEPTION_LABEL+e);
             }
             return result;
@@ -390,13 +363,8 @@ public class DeleteActivity extends AppCompatActivity {
                 setError(false);
                 getProgressDialog().dismiss();
                 getDoQueryButton().setVisibility(View.VISIBLE);
-                setBusy(false);
                 return;
             }
-
-            // we do not want clicks to queue, thus we 'swallow' unneeded
-            // extra ones.
-            setBusy(false);
 
             // updating GUI
             getProgressDialog().dismiss();
@@ -425,7 +393,7 @@ public class DeleteActivity extends AppCompatActivity {
      */
     class SQLDeleteAsyncTask extends AsyncTask<Void[], Void, List<Product>> {
         public List<Product> doInBackground(final Void[]... params) {
-            setNotYetDeleted(true);
+
 
             ArrayList<Product> result = null;
 
@@ -462,8 +430,6 @@ public class DeleteActivity extends AppCompatActivity {
             getProgressDialog().dismiss();
 
             // we can handle clicks again
-            setNotYetDeleted(false);
-            setBusy(false);
             setBusyDeleting(false);
         }
     }
