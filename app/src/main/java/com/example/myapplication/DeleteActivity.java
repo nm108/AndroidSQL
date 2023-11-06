@@ -16,8 +16,15 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * Activity for DELETE operation.
+ */
 public class DeleteActivity extends AppCompatActivity {
+
+    /* Constants */
+
     public static final String EXCEPTION_LABEL = "Exception: ";
     public static final String PRODUCT_NAME_LABEL = "Product Name: ";
     public static final String PRODUCT_QUANTITY_LABEL = "Product Quantity: ";
@@ -70,7 +77,7 @@ public class DeleteActivity extends AppCompatActivity {
         return doQueryButton;
     }
 
-    public void setDoQueryButton(Button doQueryButton) {
+    public void setDoQueryButton(final Button doQueryButton) {
         this.doQueryButton = doQueryButton;
     }
 
@@ -78,7 +85,7 @@ public class DeleteActivity extends AppCompatActivity {
         return returnButton;
     }
 
-    public void setReturnButton(Button returnButton) {
+    public void setReturnButton(final Button returnButton) {
         this.returnButton = returnButton;
     }
 
@@ -86,7 +93,7 @@ public class DeleteActivity extends AppCompatActivity {
         return productIdToDelete;
     }
 
-    public void setProductIdToDelete(String productIdToDelete) {
+    public void setProductIdToDelete(final String productIdToDelete) {
         this.productIdToDelete = productIdToDelete;
     }
 
@@ -94,7 +101,7 @@ public class DeleteActivity extends AppCompatActivity {
         return deleteProductQuestionAlertDialog;
     }
 
-    public void setDeleteProductQuestionAlertDialog(AlertDialog deleteProductQuestionAlertDialog) {
+    public void setDeleteProductQuestionAlertDialog(final AlertDialog deleteProductQuestionAlertDialog) {
         this.deleteProductQuestionAlertDialog = deleteProductQuestionAlertDialog;
     }
 
@@ -102,7 +109,7 @@ public class DeleteActivity extends AppCompatActivity {
         return operationResultAlertDialog;
     }
 
-    public void setOperationResultAlertDialog(AlertDialog operationResultAlertDialog) {
+    public void setOperationResultAlertDialog(final AlertDialog operationResultAlertDialog) {
         this.operationResultAlertDialog = operationResultAlertDialog;
     }
 
@@ -110,7 +117,7 @@ public class DeleteActivity extends AppCompatActivity {
         return errorAlertDialog;
     }
 
-    public void setErrorAlertDialog(AlertDialog errorAlertDialog) {
+    public void setErrorAlertDialog(final AlertDialog errorAlertDialog) {
         this.errorAlertDialog = errorAlertDialog;
     }
 
@@ -118,7 +125,7 @@ public class DeleteActivity extends AppCompatActivity {
         return context;
     }
 
-    public void setContext(Context context) {
+    public void setContext(final Context context) {
         this.context = context;
     }
 
@@ -126,7 +133,7 @@ public class DeleteActivity extends AppCompatActivity {
         return progressDialog;
     }
 
-    public void setProgressDialog(ProgressDialog progressDialog) {
+    public void setProgressDialog(final ProgressDialog progressDialog) {
         this.progressDialog = progressDialog;
     }
 
@@ -134,7 +141,7 @@ public class DeleteActivity extends AppCompatActivity {
         return busyDeleting;
     }
 
-    public void setBusyDeleting(boolean busyDeleting) {
+    public void setBusyDeleting(final boolean busyDeleting) {
         this.busyDeleting = busyDeleting;
     }
 
@@ -142,7 +149,7 @@ public class DeleteActivity extends AppCompatActivity {
         return error;
     }
 
-    public void setError(boolean error) {
+    public void setError(final boolean error) {
         this.error = error;
     }
 
@@ -150,7 +157,7 @@ public class DeleteActivity extends AppCompatActivity {
         return busy;
     }
 
-    public void setBusy(boolean busy) {
+    public void setBusy(final boolean busy) {
         this.busy = busy;
     }
 
@@ -158,7 +165,7 @@ public class DeleteActivity extends AppCompatActivity {
         return deleteQueryEditText;
     }
 
-    public void setDeleteQueryEditText(EditText deleteQueryEditText) {
+    public void setDeleteQueryEditText(final EditText deleteQueryEditText) {
         this.deleteQueryEditText = deleteQueryEditText;
     }
 
@@ -166,7 +173,7 @@ public class DeleteActivity extends AppCompatActivity {
         return productsListView;
     }
 
-    public void setProductsListView(ListView productsListView) {
+    public void setProductsListView(final ListView productsListView) {
         this.productsListView = productsListView;
     }
 
@@ -175,7 +182,7 @@ public class DeleteActivity extends AppCompatActivity {
     /**
      * @author Andrzej Wysocki (nm108)
      */
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
 
@@ -236,7 +243,7 @@ public class DeleteActivity extends AppCompatActivity {
      * @author Andrzej Wysocki (nm108)
      */
     private void prepareProgressDialog() {
-        progressDialog = new ProgressDialog(this);
+        setProgressDialog(new ProgressDialog(this));
         progressDialog.setCancelable(false);
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.setMessage(PLEASE_WAIT_LABEL);
@@ -281,7 +288,7 @@ public class DeleteActivity extends AppCompatActivity {
     /**
      * @author Andrzej Wysocki (nm108)
      */
-    private void doDelete(DialogInterface dialog) {
+    private void doDelete(final DialogInterface dialog) {
         try {
             if (busy) {
                 return;
@@ -364,7 +371,7 @@ public class DeleteActivity extends AppCompatActivity {
      */
     class SQLSelectAsyncTask extends AsyncTask<Void[], Void, ArrayList<Product>> {
 
-        public ArrayList<Product> doInBackground(Void[]... params) {
+        public ArrayList<Product> doInBackground(final Void[]... params) {
             ArrayList<Product> result = null;
 
             // querying database (SELECT operation).
@@ -379,7 +386,7 @@ public class DeleteActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(ArrayList<Product> products) {
+        protected void onPostExecute(final ArrayList<Product> products) {
             super.onPostExecute(products);
             // handle exceptions
             if (error) {
@@ -420,8 +427,8 @@ public class DeleteActivity extends AppCompatActivity {
      *
      * @author Andrzej Wysocki (nm108).
      */
-    class SQLDeleteAsyncTask extends AsyncTask<Integer[], Integer, ArrayList<Product>> {
-        public ArrayList<Product> doInBackground(Integer[]... params) {
+    class SQLDeleteAsyncTask extends AsyncTask<Void[], Void, List<Product>> {
+        public List<Product> doInBackground(final Void[]... params) {
             notYetDeleted = true;
 
             ArrayList<Product> result = null;
@@ -442,8 +449,7 @@ public class DeleteActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(ArrayList<Product> products) {
-            super.onPostExecute(products);
+        protected void onPostExecute(List<Product> lp) {
 
             // handling exceptions
             if (isError()) {

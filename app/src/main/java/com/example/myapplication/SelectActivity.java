@@ -23,11 +23,14 @@ import java.util.List;
  */
 public class SelectActivity extends AppCompatActivity {
 
-    /* State */
+    /* Constants */
 
     public static final String OK_LABEL = "Ok";
     public static final String PLEASE_WAIT_LABEL = "Please Wait.";
     public static final String EXCEPTION_LABEL = "Exception: ";
+
+    /* State */
+
     private Button doSelectSelectQueryButton;
     private EditText selectQueryEditText;
     private ProgressDialog progressDialog;
