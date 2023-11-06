@@ -42,7 +42,7 @@ public class SelectActivity extends AppCompatActivity {
 
     private AlertDialog errorAlertDialog;
 
-    private boolean busy = false;
+
 
     private Context context;
     private View view;
@@ -104,14 +104,6 @@ public class SelectActivity extends AppCompatActivity {
 
     public void setErrorAlertDialog(final AlertDialog errorAlertDialog) {
         this.errorAlertDialog = errorAlertDialog;
-    }
-
-    public boolean isBusy() {
-        return busy;
-    }
-
-    public void setBusy(final boolean busy) {
-        this.busy = busy;
     }
 
     public Context getContext() {
@@ -188,13 +180,6 @@ public class SelectActivity extends AppCompatActivity {
      * @author Andrzej Wysocki (nm108).
      */
     public void selectQueryClickHandler(final View v) {
-        // we do not want button clicks queueing, so we just 'swallow'
-        // unneeded extra ones.
-        if (isBusy()) {
-            return;
-        }
-        setBusy(true);
-
         // informing user that we are busy
         progressDialog.show();
 
@@ -274,7 +259,7 @@ public class SelectActivity extends AppCompatActivity {
             if (isError()) {
                 errorAlertDialog.setMessage(EXCEPTION_LABEL+exceptionMessageString);
                 errorAlertDialog.show();
-                setBusy(false);
+
                 setError(false);
                 progressDialog.dismiss();
                 return;
@@ -285,7 +270,7 @@ public class SelectActivity extends AppCompatActivity {
             getProductsListView().setAdapter(pa);
 
             // work done, cleaning up
-            setBusy(false);
+
             progressDialog.dismiss();
         }
     }
