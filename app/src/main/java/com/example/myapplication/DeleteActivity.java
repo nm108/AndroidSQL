@@ -305,10 +305,12 @@ public class DeleteActivity extends AppCompatActivity {
                 return;
             }
             setBusyDeleting(true);
+
             SQLDeleteAsyncTask sqlDeleteAsyncTask = new SQLDeleteAsyncTask();
             sqlDeleteAsyncTask.execute();
 
-            refreshListView();
+            populateProductsListView();
+
         } catch (Exception e) {
             dialog.dismiss();
             getErrorAlertDialog().setMessage(EXCEPTION_LABEL+e);
@@ -322,20 +324,6 @@ public class DeleteActivity extends AppCompatActivity {
      * We sleep until product deletion is completed, then populate
      * products list view
      */
-    private void refreshListView() {
-        try {
-            while (isNotYetDeleted()) {
-                Thread.sleep(WAIT_LENGTH);
-            }
-        } catch (InterruptedException ie) {
-            populateProductsListView();
-            return;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        populateProductsListView();
-    }
 
     /**
      * @author Andrzej Wysocki (nm108)
