@@ -19,11 +19,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 
 public class UpdateActivity extends AppCompatActivity {
+
+    /* Constants */
+
+    public static final String PLEASE_WAIT_LABEL = "Please Wait.";
+    public static final String OK_LABEL = "Ok";
+    public static final String ORIGINAL_PRODUCT_ID_LABEL = "Original Product id: ";
+    public static final String ORIGINAL_PRODUCT_NAME_LABEL = "Original Product name: ";
+    public static final String ORIGINAL_PRODUCT_QUANTITY_LABEL = "Original Product quantity: ";
+    public static final String PRODUCT_UPDATED_LABEL = "Product Updated.";
+
+    /* State */
+
     private Button doUpdateQueryButton;
 
     private Button doUpdateButton;
 
-    private AlertDialog exceptionAD;
+    private AlertDialog exceptionAlertDialog;
 
     private EditText queryEditText;
 
@@ -35,21 +47,133 @@ public class UpdateActivity extends AppCompatActivity {
 
     private EditText newProductAmountEditText;
 
-    private Context c;
-
-    private boolean busy;
-
-    private boolean busyUpdating;
+    private Context context;
 
     private boolean error;
 
-    private ProgressDialog pd;
+    private ProgressDialog progressDialog;
 
-    private ListView lv;
+    private ListView productsListView;
 
-    AlertDialog ad;
+    AlertDialog operationResultAlertDialog;
 
-    private Product p;
+    private Product product;
+
+    /* Accessors */
+
+    public Button getDoUpdateQueryButton() {
+        return doUpdateQueryButton;
+    }
+
+    public void setDoUpdateQueryButton(Button doUpdateQueryButton) {
+        this.doUpdateQueryButton = doUpdateQueryButton;
+    }
+
+    public Button getDoUpdateButton() {
+        return doUpdateButton;
+    }
+
+    public void setDoUpdateButton(Button doUpdateButton) {
+        this.doUpdateButton = doUpdateButton;
+    }
+
+    public AlertDialog getExceptionAlertDialog() {
+        return exceptionAlertDialog;
+    }
+
+    public void setExceptionAlertDialog(AlertDialog exceptionAlertDialog) {
+        this.exceptionAlertDialog = exceptionAlertDialog;
+    }
+
+    public EditText getQueryEditText() {
+        return queryEditText;
+    }
+
+    public void setQueryEditText(EditText queryEditText) {
+        this.queryEditText = queryEditText;
+    }
+
+    public TextView getOriginalProductTextView() {
+        return originalProductTextView;
+    }
+
+    public void setOriginalProductTextView(TextView originalProductTextView) {
+        this.originalProductTextView = originalProductTextView;
+    }
+
+    public Button getReturnButton() {
+        return returnButton;
+    }
+
+    public void setReturnButton(Button returnButton) {
+        this.returnButton = returnButton;
+    }
+
+    public EditText getNewProductNameEditText() {
+        return newProductNameEditText;
+    }
+
+    public void setNewProductNameEditText(EditText newProductNameEditText) {
+        this.newProductNameEditText = newProductNameEditText;
+    }
+
+    public EditText getNewProductAmountEditText() {
+        return newProductAmountEditText;
+    }
+
+    public void setNewProductAmountEditText(EditText newProductAmountEditText) {
+        this.newProductAmountEditText = newProductAmountEditText;
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
+    public boolean isError() {
+        return error;
+    }
+
+    public void setError(boolean error) {
+        this.error = error;
+    }
+
+    public ProgressDialog getProgressDialog() {
+        return progressDialog;
+    }
+
+    public void setProgressDialog(ProgressDialog progressDialog) {
+        this.progressDialog = progressDialog;
+    }
+
+    public ListView getProductsListView() {
+        return productsListView;
+    }
+
+    public void setProductsListView(ListView productsListView) {
+        this.productsListView = productsListView;
+    }
+
+    public AlertDialog getOperationResultAlertDialog() {
+        return operationResultAlertDialog;
+    }
+
+    public void setOperationResultAlertDialog(AlertDialog operationResultAlertDialog) {
+        this.operationResultAlertDialog = operationResultAlertDialog;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    /* Methods */
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,11 +192,11 @@ public class UpdateActivity extends AppCompatActivity {
         );
 
 
-        c = this;
-        pd = new ProgressDialog(this);
-        pd.setCancelable(false);
-        pd.setCanceledOnTouchOutside(false);
-        pd.setMessage("Please Wait.");
+        context = this;
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setMessage(PLEASE_WAIT_LABEL);
 
         setContentView(R.layout.activity_update);
 
@@ -83,7 +207,7 @@ public class UpdateActivity extends AppCompatActivity {
         newProductNameEditText.setVisibility(View.GONE);
         newProductAmountEditText = findViewById(R.id.NewProductAmountEditText);
         newProductAmountEditText.setVisibility(View.GONE);
-        lv = findViewById(R.id.LV);
+        productsListView = findViewById(R.id.LV);
 
 
         returnButton = findViewById(R.id.ReturnButton);
@@ -97,11 +221,8 @@ public class UpdateActivity extends AppCompatActivity {
 
         doUpdateButton.setOnClickListener(
                 (final View v) -> {
-                    if (busyUpdating) {
-                        return;
-                    }
-                    busyUpdating = true;
-                    pd.show();
+
+                    progressDialog.show();
                     SQLUpdateTask sqlUpdateTask = new SQLUpdateTask();
                     sqlUpdateTask.execute();
                 }
@@ -120,17 +241,17 @@ public class UpdateActivity extends AppCompatActivity {
 
         );
 
-        ad = new AlertDialog.Builder(this).create();
-        ad.setCancelable(false);
-        ad.setCanceledOnTouchOutside(false);
+        operationResultAlertDialog = new AlertDialog.Builder(this).create();
+        operationResultAlertDialog.setCancelable(false);
+        operationResultAlertDialog.setCanceledOnTouchOutside(false);
 
-        exceptionAD = new AlertDialog.Builder(this).create();
-        exceptionAD.setCancelable(false);
-        exceptionAD.setCanceledOnTouchOutside(false);
+        exceptionAlertDialog = new AlertDialog.Builder(this).create();
+        exceptionAlertDialog.setCancelable(false);
+        exceptionAlertDialog.setCanceledOnTouchOutside(false);
 
 
-        ad.setButton(
-                AlertDialog.BUTTON_NEUTRAL, (CharSequence) "Ok",
+        operationResultAlertDialog.setButton(
+                AlertDialog.BUTTON_NEUTRAL, (CharSequence) OK_LABEL,
                 (DialogInterface.OnClickListener) (dialog, which) ->
 
                 {
@@ -141,14 +262,14 @@ public class UpdateActivity extends AppCompatActivity {
                     newProductNameEditText.setVisibility(View.GONE);
                     newProductAmountEditText.setVisibility(View.GONE);
                     originalProductTextView.setVisibility(View.GONE);
-                    lv.setVisibility(View.VISIBLE);
+                    productsListView.setVisibility(View.VISIBLE);
                     doUpdateQueryButton.setVisibility(View.VISIBLE);
                     populateLV();
                     dialog.dismiss();
                 });
 
-        exceptionAD.setButton(
-                AlertDialog.BUTTON_NEUTRAL, (CharSequence) "Ok",
+        exceptionAlertDialog.setButton(
+                AlertDialog.BUTTON_NEUTRAL, (CharSequence) OK_LABEL,
                 (DialogInterface.OnClickListener) (dialog, which) -> {
                     error = false;
                     dialog.dismiss();
@@ -170,9 +291,7 @@ public class UpdateActivity extends AppCompatActivity {
     }
 
     public void onClick(View v) {
-        if (busy) return;
-        busy = true;
-        pd.show();
+        progressDialog.show();
 
         populateLV();
 //
@@ -180,7 +299,7 @@ public class UpdateActivity extends AppCompatActivity {
 //
 
     private void populateLV() {
-        pd.show();
+        progressDialog.show();
         UpdateActivity.SQLQueryTask sTask = new UpdateActivity.SQLQueryTask();
         Integer[] sarr = new Integer[]{};
         ArrayList<Product> data = new ArrayList<Product>();
@@ -191,34 +310,26 @@ public class UpdateActivity extends AppCompatActivity {
 
 
 
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        productsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position,
                                     long id) {
 
-                p = (Product) parent.getItemAtPosition(position);
+                product = (Product) parent.getItemAtPosition(position);
 
                 originalProductTextView.setVisibility(View.VISIBLE);
-                originalProductTextView.setText("Original Product id: "+p.getId()+"" +
-                        "\nOriginal Product name: "+p.getName()+"" +
-                        "\nOriginal Product quantity: "+p.getAmount());
+                originalProductTextView.setText(ORIGINAL_PRODUCT_ID_LABEL +
+                        product.getId()+"\n" +
+                        ORIGINAL_PRODUCT_NAME_LABEL +
+                        product.getName()+"\n" +
+                        ORIGINAL_PRODUCT_QUANTITY_LABEL +
+                        product.getAmount());
                 queryEditText.setVisibility(View.GONE);
-                lv.setVisibility(View.GONE);
+                productsListView.setVisibility(View.GONE);
                 doUpdateQueryButton.setVisibility(View.GONE);
                 newProductNameEditText.setVisibility(View.VISIBLE);
                 newProductAmountEditText.setVisibility(View.VISIBLE);
                 doUpdateButton.setVisibility(View.VISIBLE);
-//                populateLV();
-
-
-                // Wait for this worker thread’s notification
-//                    sTask.wait();
-
-
-//                ad.setMessage("Selected Product's id: " + val);
-//                ad.show();
             }
-
-
         });
 
     }
@@ -228,12 +339,12 @@ public class UpdateActivity extends AppCompatActivity {
             public ArrayList<Product> doInBackground(Integer[]... params) {
                 ArrayList<Product> result = null;
 
-                JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper(c);
+                JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper(context);
 
                 try {
                     result = jdbcDatabaseHelper.doSelect(queryEditText.getText().toString());
                 } catch (Exception e) {
-                    exceptionAD.setMessage(e.toString());
+                    exceptionAlertDialog.setMessage(e.toString());
                     return null;
                 }
                 return result;
@@ -243,19 +354,17 @@ public class UpdateActivity extends AppCompatActivity {
             protected void onPostExecute(ArrayList<Product> products) {
                 super.onPostExecute(products);
                 if (products == null) {
-                    exceptionAD.show();
-                    busy = false;
+                    exceptionAlertDialog.show();
 
-                    pd.dismiss();
+                    progressDialog.dismiss();
                     return;
                 }
 
 
-                ProductAdapter pa = new ProductAdapter(c, products);
-                lv.setAdapter(pa);
+                ProductAdapter pa = new ProductAdapter(context, products);
+                productsListView.setAdapter(pa);
 
-                busy = false;
-                pd.dismiss();
+                progressDialog.dismiss();
 
             }
         }
@@ -265,7 +374,7 @@ public class UpdateActivity extends AppCompatActivity {
 
         public ArrayList<Product> doInBackground(Integer[]... params) {
 
-            JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper(c);
+            JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper(context);
             String newProductName = newProductNameEditText.getText().toString();
             if (newProductName.trim().equals("")) {
                 newProductName = "!!";
@@ -280,10 +389,10 @@ public class UpdateActivity extends AppCompatActivity {
             }
 
             try {
-                jdbcDatabaseHelper.doUpdate(p.getId(),
+                jdbcDatabaseHelper.doUpdate(product.getId(),
                         newProductName, newProductAmount);
             } catch (Exception e) {
-                exceptionAD.setMessage(e.toString());
+                exceptionAlertDialog.setMessage(e.toString());
                 error = true;
                 return null;
             }
@@ -294,23 +403,17 @@ public class UpdateActivity extends AppCompatActivity {
         protected void onPostExecute(ArrayList<Product> products) {
             super.onPostExecute(products);
             if (error) {
-                exceptionAD.show();
-                busy = false;
-                pd.dismiss();
+                exceptionAlertDialog.show();
+
+                progressDialog.dismiss();
                 error = false;
                 return;
             }
 
-            ad.setMessage("Product Updated.");
-            ad.show();
+            operationResultAlertDialog.setMessage(PRODUCT_UPDATED_LABEL);
+            operationResultAlertDialog.show();
 
-
-            busy = false;
-            busyUpdating = false;
-            pd.dismiss();
-
-
-
+            progressDialog.dismiss();
         }
     }
 
