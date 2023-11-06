@@ -190,7 +190,7 @@ public class DeleteActivity extends AppCompatActivity {
         setContentView(R.layout.activity_delete);
         setDoQueryButton(findViewById(R.id.DeleteDoSelectQueryButton));
         setDeleteQueryEditText(findViewById(R.id.DeleteQueryEditText));
-        setProductsListView(findViewById(R.id.DeleteLV));
+        setProductsListView(findViewById(R.id.DeleteProductsListView));
         setReturnButton(findViewById(R.id.DeleteReturnButton));
 
         getDoQueryButton().setOnClickListener(
