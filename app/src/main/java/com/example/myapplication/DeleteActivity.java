@@ -64,6 +64,10 @@ public class DeleteActivity extends AppCompatActivity {
 
     private boolean error = false;
 
+    private boolean selecting = false;
+
+    private boolean deleting = false;
+
     /* Accessors */
 
     public Button getDoQueryButton() {
@@ -266,12 +270,13 @@ public class DeleteActivity extends AppCompatActivity {
      * @author Andrzej Wysocki (nm108)
      */
     private void doDelete(final DialogInterface dialog) {
+        deleting = true;
+        updateProgressDialog();
+
         try {
             SQLDeleteAsyncTask sqlDeleteAsyncTask = new SQLDeleteAsyncTask();
             sqlDeleteAsyncTask.execute();
-
             populateProductsListView();
-
         } catch (Exception e) {
             dialog.dismiss();
             getErrorAlertDialog().setMessage(EXCEPTION_LABEL+e);
@@ -306,9 +311,8 @@ public class DeleteActivity extends AppCompatActivity {
      * @author Andrzej Wysocki (nm108)
      */
     void populateProductsListView() {
-        if (!getProgressDialog().isShowing()) {
-            getProgressDialog().show();
-        }
+        selecting = true;
+        updateProgressDialog();
         try {
             final SQLSelectAsyncTask sTask = new SQLSelectAsyncTask();
             sTask.execute();
@@ -316,6 +320,18 @@ public class DeleteActivity extends AppCompatActivity {
             getErrorAlertDialog().setMessage(EXCEPTION_LABEL+e);
             getErrorAlertDialog().show();
             return;
+        }
+    }
+
+    void updateProgressDialog() {
+        if (selecting || deleting) {
+            if (!getProgressDialog().isShowing()) {
+                getProgressDialog().show();
+            }
+        } else {
+            if (getProgressDialog().isShowing()) {
+                getProgressDialog().dismiss();
+            }
         }
     }
 
@@ -327,6 +343,9 @@ public class DeleteActivity extends AppCompatActivity {
     class SQLSelectAsyncTask extends AsyncTask<Void[], Void, ArrayList<Product>> {
 
         public ArrayList<Product> doInBackground(final Void[]... params) {
+            selecting = true;
+            updateProgressDialog();
+
             ArrayList<Product> result = null;
 
             // querying database (SELECT operation).
@@ -346,13 +365,13 @@ public class DeleteActivity extends AppCompatActivity {
             if (isError()) {
                 getErrorAlertDialog().show();
                 setError(false);
-                getProgressDialog().dismiss();
+                selecting = false;
+                updateProgressDialog();
                 getDoQueryButton().setVisibility(View.VISIBLE);
                 return;
             }
 
             // updating GUI
-            getProgressDialog().dismiss();
             ProductAdapter productAdapter = new ProductAdapter(context, products);
             getProductsListView().setAdapter(productAdapter);
             getDoQueryButton().setVisibility(View.VISIBLE);
@@ -368,6 +387,9 @@ public class DeleteActivity extends AppCompatActivity {
                     getDeleteProductQuestionAlertDialog().show();
                 }
             });
+
+            selecting = false;
+            updateProgressDialog();
         }
     }
 
@@ -378,12 +400,13 @@ public class DeleteActivity extends AppCompatActivity {
      */
     class SQLDeleteAsyncTask extends AsyncTask<Void[], Void, List<Product>> {
         public List<Product> doInBackground(final Void[]... params) {
+            deleting = true;
+            updateProgressDialog();
+
             ArrayList<Product> result = null;
 
             // updating GUI
-            if (!progressDialog.isShowing()) {
-                getProgressDialog().show();
-            }
+            updateProgressDialog();
 
             // operating database
             try {
@@ -401,14 +424,19 @@ public class DeleteActivity extends AppCompatActivity {
             if (isError()) {
                 getErrorAlertDialog().show();
                 setError(false);
-                getProgressDialog().dismiss();
+                deleting = false;
+                updateProgressDialog();
+
+
 
                 return;
             }
 
             // updating GUI
             getOperationResultAlertDialog().show();
-            getProgressDialog().dismiss();
+
+            deleting = false;
+            updateProgressDialog();
         }
     }
 }
