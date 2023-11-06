@@ -158,6 +158,22 @@ public class DeleteActivity extends AppCompatActivity {
         this.productsListView = productsListView;
     }
 
+    public boolean isSelecting() {
+        return selecting;
+    }
+
+    public void setSelecting(boolean selecting) {
+        this.selecting = selecting;
+    }
+
+    public boolean isDeleting() {
+        return deleting;
+    }
+
+    public void setDeleting(boolean deleting) {
+        this.deleting = deleting;
+    }
+
     /* Methods */
 
     /**
@@ -270,7 +286,7 @@ public class DeleteActivity extends AppCompatActivity {
      * @author Andrzej Wysocki (nm108)
      */
     private void doDelete(final DialogInterface dialog) {
-        deleting = true;
+        setDeleting(true);
         updateProgressDialog();
 
         try {
@@ -283,13 +299,6 @@ public class DeleteActivity extends AppCompatActivity {
             getErrorAlertDialog().show();
         }
     }
-
-    /**
-     * We want to refresh list view AFTER product deletion completes
-     *
-     * We sleep until product deletion is completed, then populate
-     * products list view
-     */
 
     /**
      * @author Andrzej Wysocki (nm108)
@@ -311,7 +320,7 @@ public class DeleteActivity extends AppCompatActivity {
      * @author Andrzej Wysocki (nm108)
      */
     void populateProductsListView() {
-        selecting = true;
+        setSelecting(true);
         updateProgressDialog();
         try {
             final SQLSelectAsyncTask sTask = new SQLSelectAsyncTask();
@@ -324,7 +333,7 @@ public class DeleteActivity extends AppCompatActivity {
     }
 
     void updateProgressDialog() {
-        if (selecting || deleting) {
+        if (isSelecting() || isDeleting()) {
             if (!getProgressDialog().isShowing()) {
                 getProgressDialog().show();
             }
@@ -343,10 +352,11 @@ public class DeleteActivity extends AppCompatActivity {
     class SQLSelectAsyncTask extends AsyncTask<Void[], Void, ArrayList<Product>> {
 
         public ArrayList<Product> doInBackground(final Void[]... params) {
-            selecting = true;
-            updateProgressDialog();
-
             ArrayList<Product> result = null;
+
+            // Updating GUI
+            setSelecting(true);
+            updateProgressDialog();
 
             // querying database (SELECT operation).
             JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper(context);
@@ -365,7 +375,7 @@ public class DeleteActivity extends AppCompatActivity {
             if (isError()) {
                 getErrorAlertDialog().show();
                 setError(false);
-                selecting = false;
+                setSelecting(false);
                 updateProgressDialog();
                 getDoQueryButton().setVisibility(View.VISIBLE);
                 return;
@@ -388,7 +398,8 @@ public class DeleteActivity extends AppCompatActivity {
                 }
             });
 
-            selecting = false;
+            // Updating GUI
+            setSelecting(false);
             updateProgressDialog();
         }
     }
@@ -400,12 +411,10 @@ public class DeleteActivity extends AppCompatActivity {
      */
     class SQLDeleteAsyncTask extends AsyncTask<Void[], Void, List<Product>> {
         public List<Product> doInBackground(final Void[]... params) {
-            deleting = true;
-            updateProgressDialog();
-
             ArrayList<Product> result = null;
 
-            // updating GUI
+            // Updating GUI
+            setDeleting(true);
             updateProgressDialog();
 
             // operating database
@@ -424,18 +433,15 @@ public class DeleteActivity extends AppCompatActivity {
             if (isError()) {
                 getErrorAlertDialog().show();
                 setError(false);
-                deleting = false;
+                setDeleting(false);
                 updateProgressDialog();
-
-
 
                 return;
             }
 
             // updating GUI
             getOperationResultAlertDialog().show();
-
-            deleting = false;
+            setDeleting(false);
             updateProgressDialog();
         }
     }
