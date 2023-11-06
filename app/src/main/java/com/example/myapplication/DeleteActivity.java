@@ -378,8 +378,6 @@ public class DeleteActivity extends AppCompatActivity {
      */
     class SQLDeleteAsyncTask extends AsyncTask<Void[], Void, List<Product>> {
         public List<Product> doInBackground(final Void[]... params) {
-
-
             ArrayList<Product> result = null;
 
             // updating GUI
@@ -399,7 +397,6 @@ public class DeleteActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(List<Product> lp) {
-
             // handling exceptions
             if (isError()) {
                 getErrorAlertDialog().show();
@@ -411,7 +408,6 @@ public class DeleteActivity extends AppCompatActivity {
 
             // updating GUI
             getOperationResultAlertDialog().show();
-
             getProgressDialog().dismiss();
         }
     }
