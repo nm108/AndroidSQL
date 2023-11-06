@@ -256,14 +256,7 @@ public class UpdateActivity extends AppCompatActivity {
 
                 {
 
-                    queryEditText.setVisibility(View.VISIBLE);
-                    originalProductTextView.setVisibility(View.GONE);
-                    doUpdateButton.setVisibility(View.GONE);
-                    newProductNameEditText.setVisibility(View.GONE);
-                    newProductAmountEditText.setVisibility(View.GONE);
-                    originalProductTextView.setVisibility(View.GONE);
-                    productsListView.setVisibility(View.VISIBLE);
-                    doUpdateQueryButton.setVisibility(View.VISIBLE);
+                    switchGUIToProductsList();
                     populateLV();
                     dialog.dismiss();
                 });
@@ -278,6 +271,33 @@ public class UpdateActivity extends AppCompatActivity {
         );
 
 
+    }
+
+    private void switchGUIToProductsList() {
+        queryEditText.setVisibility(View.VISIBLE);
+        originalProductTextView.setVisibility(View.GONE);
+        doUpdateButton.setVisibility(View.GONE);
+        newProductNameEditText.setVisibility(View.GONE);
+        newProductAmountEditText.setVisibility(View.GONE);
+        originalProductTextView.setVisibility(View.GONE);
+        productsListView.setVisibility(View.VISIBLE);
+        doUpdateQueryButton.setVisibility(View.VISIBLE);
+    }
+
+    private void switchGUIToEditForm() {
+        originalProductTextView.setVisibility(View.VISIBLE);
+        originalProductTextView.setText(ORIGINAL_PRODUCT_ID_LABEL +
+                product.getId()+"\n" +
+                ORIGINAL_PRODUCT_NAME_LABEL +
+                product.getName()+"\n" +
+                ORIGINAL_PRODUCT_QUANTITY_LABEL +
+                product.getAmount());
+        queryEditText.setVisibility(View.GONE);
+        productsListView.setVisibility(View.GONE);
+        doUpdateQueryButton.setVisibility(View.GONE);
+        newProductNameEditText.setVisibility(View.VISIBLE);
+        newProductAmountEditText.setVisibility(View.VISIBLE);
+        doUpdateButton.setVisibility(View.VISIBLE);
     }
 
 
@@ -316,19 +336,7 @@ public class UpdateActivity extends AppCompatActivity {
 
                 product = (Product) parent.getItemAtPosition(position);
 
-                originalProductTextView.setVisibility(View.VISIBLE);
-                originalProductTextView.setText(ORIGINAL_PRODUCT_ID_LABEL +
-                        product.getId()+"\n" +
-                        ORIGINAL_PRODUCT_NAME_LABEL +
-                        product.getName()+"\n" +
-                        ORIGINAL_PRODUCT_QUANTITY_LABEL +
-                        product.getAmount());
-                queryEditText.setVisibility(View.GONE);
-                productsListView.setVisibility(View.GONE);
-                doUpdateQueryButton.setVisibility(View.GONE);
-                newProductNameEditText.setVisibility(View.VISIBLE);
-                newProductAmountEditText.setVisibility(View.VISIBLE);
-                doUpdateButton.setVisibility(View.VISIBLE);
+                switchGUIToEditForm();
             }
         });
 
