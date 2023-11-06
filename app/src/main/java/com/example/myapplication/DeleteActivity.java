@@ -304,8 +304,10 @@ public class DeleteActivity extends AppCompatActivity {
     private void refreshListView() {
         try {
             while (notYetDeleted) {
-                Thread.currentThread().wait(WAIT_LENGTH);
+                Thread.sleep(1000);
             }
+        } catch (InterruptedException ie) {
+            populateProductsListView();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
