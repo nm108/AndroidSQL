@@ -45,7 +45,6 @@ public class SelectActivity extends AppCompatActivity {
 
 
     private Context context;
-    private View view;
 
 
     /* Accessors */
@@ -114,15 +113,6 @@ public class SelectActivity extends AppCompatActivity {
         this.context = context;
     }
 
-    public View getView() {
-        return view;
-    }
-
-    public void setView(final View view) {
-        this.view = view;
-    }
-
-
     /* Methods */
 
     /**
@@ -148,7 +138,7 @@ public class SelectActivity extends AppCompatActivity {
                 this::selectQueryClickHandler
         );
 
-        returnButton.setOnClickListener(
+        getReturnButton().setOnClickListener(
                 (final View v) -> {
                     switchActivityToMain();
                 }
@@ -162,10 +152,10 @@ public class SelectActivity extends AppCompatActivity {
      * @author Andrzej Wysocki (nm108).
      */
     private void prepareProgressDialog() {
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setCancelable(false);
-        progressDialog.setCanceledOnTouchOutside(false);
-        progressDialog.setMessage(PLEASE_WAIT_LABEL);
+        setProgressDialog(new ProgressDialog(this));
+        getProgressDialog().setCancelable(false);
+        getProgressDialog().setCanceledOnTouchOutside(false);
+        getProgressDialog().setMessage(PLEASE_WAIT_LABEL);
     }
 
     /**
@@ -181,7 +171,7 @@ public class SelectActivity extends AppCompatActivity {
      */
     public void selectQueryClickHandler(final View v) {
         // informing user that we are busy
-        progressDialog.show();
+        getProgressDialog().show();
 
         // querying Database (SELECT Operation).
         try {
@@ -202,10 +192,10 @@ public class SelectActivity extends AppCompatActivity {
     private void prepareErrorAlertDialog() {
         setErrorAlertDialog(
                 new AlertDialog.Builder(this).create());
-        errorAlertDialog.setTitle(EXCEPTION_LABEL);
-        errorAlertDialog.setCancelable(false);
-        errorAlertDialog.setCanceledOnTouchOutside(false);
-        errorAlertDialog.setButton(
+        getErrorAlertDialog().setTitle(EXCEPTION_LABEL);
+        getErrorAlertDialog().setCancelable(false);
+        getErrorAlertDialog().setCanceledOnTouchOutside(false);
+        getErrorAlertDialog().setButton(
                 AlertDialog.BUTTON_NEUTRAL, (CharSequence) OK_LABEL,
                 (DialogInterface.OnClickListener) (dialog, which) ->
                 {
@@ -237,12 +227,12 @@ public class SelectActivity extends AppCompatActivity {
         public ArrayList<Product> doInBackground(List[]... params) {
             ArrayList<Product> result = null;
 
-            final JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper(context);
+            final JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper(getContext());
             try {
                 result = jdbcDatabaseHelper.doSelect(selectQueryEditText.getText().toString());
             } catch (Exception e) {
                 setError(true);
-                exceptionMessageString = e.toString();
+                setExceptionMessageString(e.toString());
                 return null;
             }
             return result;
@@ -257,21 +247,22 @@ public class SelectActivity extends AppCompatActivity {
 
             // handling errors
             if (isError()) {
-                errorAlertDialog.setMessage(EXCEPTION_LABEL+exceptionMessageString);
-                errorAlertDialog.show();
+                getErrorAlertDialog().setMessage(
+                        EXCEPTION_LABEL+getExceptionMessageString());
+                getErrorAlertDialog().show();
 
                 setError(false);
-                progressDialog.dismiss();
+                getProgressDialog().dismiss();
                 return;
             }
 
             // populating Products List View
-            final ProductAdapter pa = new ProductAdapter(context, products);
+            final ProductAdapter pa = new ProductAdapter(getContext(), products);
             getProductsListView().setAdapter(pa);
 
             // work done, cleaning up
 
-            progressDialog.dismiss();
+            getProgressDialog().dismiss();
         }
     }
 }
