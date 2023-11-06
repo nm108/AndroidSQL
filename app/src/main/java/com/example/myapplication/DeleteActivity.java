@@ -58,8 +58,6 @@ public class DeleteActivity extends AppCompatActivity {
 
     private ProgressDialog progressDialog;
 
-    private boolean busyDeleting;
-
     private EditText deleteQueryEditText;
 
     private ListView productsListView;
@@ -130,14 +128,6 @@ public class DeleteActivity extends AppCompatActivity {
 
     public void setProgressDialog(final ProgressDialog progressDialog) {
         this.progressDialog = progressDialog;
-    }
-
-    public boolean isBusyDeleting() {
-        return busyDeleting;
-    }
-
-    public void setBusyDeleting(final boolean busyDeleting) {
-        this.busyDeleting = busyDeleting;
     }
 
     public boolean isError() {
@@ -277,11 +267,6 @@ public class DeleteActivity extends AppCompatActivity {
      */
     private void doDelete(final DialogInterface dialog) {
         try {
-            if (isBusyDeleting()) {
-                return;
-            }
-            setBusyDeleting(true);
-
             SQLDeleteAsyncTask sqlDeleteAsyncTask = new SQLDeleteAsyncTask();
             sqlDeleteAsyncTask.execute();
 
@@ -428,9 +413,6 @@ public class DeleteActivity extends AppCompatActivity {
             getOperationResultAlertDialog().show();
 
             getProgressDialog().dismiss();
-
-            // we can handle clicks again
-            setBusyDeleting(false);
         }
     }
 }
