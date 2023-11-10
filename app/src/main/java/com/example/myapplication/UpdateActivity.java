@@ -177,48 +177,32 @@ public class UpdateActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-
-        setContentView(R.layout.activity_update);
-
-        returnButton = findViewById(R.id.ReturnButton);
-
-        returnButton.setOnClickListener(
-                (final View v) -> {
-                    switchActivities();
-                }
-
-        );
-
-
         context = this;
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setCancelable(false);
-        progressDialog.setCanceledOnTouchOutside(false);
-        progressDialog.setMessage(PLEASE_WAIT_LABEL);
 
+        prepareView();
+        prepareProgressDialog();
+        prepareOperationResultAlertDialog();
+        prepareExceptionAlertDialog();
+
+    }
+
+    private void prepareView() {
         setContentView(R.layout.activity_update);
 
-        doUpdateQueryButton = findViewById(R.id.DoUpdateQueryButton);
         queryEditText = findViewById(R.id.QueryEditText);
+
+        productsListView = findViewById(R.id.LV);
 
         newProductNameEditText = findViewById(R.id.NewProductNameEditText);
         newProductNameEditText.setVisibility(View.GONE);
         newProductAmountEditText = findViewById(R.id.NewProductAmountEditText);
         newProductAmountEditText.setVisibility(View.GONE);
-        productsListView = findViewById(R.id.LV);
-
-
-        returnButton = findViewById(R.id.ReturnButton);
 
         originalProductTextView = findViewById(R.id.originalProductTextView);
         originalProductTextView.setVisibility(View.GONE);
 
-
         doUpdateButton = findViewById(R.id.DoUpdateButton);
         doUpdateButton.setVisibility(View.GONE);
-
         doUpdateButton.setOnClickListener(
                 (final View v) -> {
 
@@ -228,27 +212,39 @@ public class UpdateActivity extends AppCompatActivity {
                 }
         );
 
+        doUpdateQueryButton = findViewById(R.id.DoUpdateQueryButton);
         doUpdateQueryButton.setOnClickListener(
                 this::onClick
         );
 
-//        doSelectQueryButton.setClickable(true);
-
+        returnButton = findViewById(R.id.ReturnButton);
         returnButton.setOnClickListener(
                 (final View v) -> {
                     switchActivities();
                 }
 
         );
+    }
 
-        operationResultAlertDialog = new AlertDialog.Builder(this).create();
-        operationResultAlertDialog.setCancelable(false);
-        operationResultAlertDialog.setCanceledOnTouchOutside(false);
-
+    private void prepareExceptionAlertDialog() {
         exceptionAlertDialog = new AlertDialog.Builder(this).create();
         exceptionAlertDialog.setCancelable(false);
         exceptionAlertDialog.setCanceledOnTouchOutside(false);
 
+        exceptionAlertDialog.setButton(
+                AlertDialog.BUTTON_NEUTRAL, (CharSequence) OK_LABEL,
+                (DialogInterface.OnClickListener) (dialog, which) -> {
+                    error = false;
+                    dialog.dismiss();
+                    switchActivities();
+                }
+        );
+    }
+
+    private void prepareOperationResultAlertDialog() {
+        operationResultAlertDialog = new AlertDialog.Builder(this).create();
+        operationResultAlertDialog.setCancelable(false);
+        operationResultAlertDialog.setCanceledOnTouchOutside(false);
 
         operationResultAlertDialog.setButton(
                 AlertDialog.BUTTON_NEUTRAL, (CharSequence) OK_LABEL,
@@ -260,17 +256,13 @@ public class UpdateActivity extends AppCompatActivity {
                     populateLV();
                     dialog.dismiss();
                 });
+    }
 
-        exceptionAlertDialog.setButton(
-                AlertDialog.BUTTON_NEUTRAL, (CharSequence) OK_LABEL,
-                (DialogInterface.OnClickListener) (dialog, which) -> {
-                    error = false;
-                    dialog.dismiss();
-                    switchActivities();
-                }
-        );
-
-
+    private void prepareProgressDialog() {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setMessage(PLEASE_WAIT_LABEL);
     }
 
     private void switchGUIToProductsList() {

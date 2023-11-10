@@ -229,7 +229,7 @@ public class SelectActivity extends AppCompatActivity {
 
             final JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper(getContext());
             try {
-                result = jdbcDatabaseHelper.doSelect(selectQueryEditText.getText().toString());
+                result = jdbcDatabaseHelper.doSelect(getSelectQueryEditText().getText().toString());
             } catch (Exception e) {
                 setError(true);
                 setExceptionMessageString(e.toString());
