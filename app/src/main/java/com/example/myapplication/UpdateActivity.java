@@ -214,15 +214,17 @@ public class UpdateActivity extends AppCompatActivity {
 
         doUpdateQueryButton = findViewById(R.id.DoUpdateQueryButton);
         doUpdateQueryButton.setOnClickListener(
-                this::onClick
+                (final View v) -> {
+                    getProgressDialog().show();
+                    populeProductsListView();
+                }
         );
 
         returnButton = findViewById(R.id.ReturnButton);
         returnButton.setOnClickListener(
                 (final View v) -> {
-                    switchActivities();
+                    switchActivityToMain();
                 }
-
         );
     }
 
@@ -236,7 +238,7 @@ public class UpdateActivity extends AppCompatActivity {
                 (DialogInterface.OnClickListener) (dialog, which) -> {
                     error = false;
                     dialog.dismiss();
-                    switchActivities();
+                    switchActivityToMain();
                 }
         );
     }
@@ -249,13 +251,11 @@ public class UpdateActivity extends AppCompatActivity {
         operationResultAlertDialog.setButton(
                 AlertDialog.BUTTON_NEUTRAL, (CharSequence) OK_LABEL,
                 (DialogInterface.OnClickListener) (dialog, which) ->
-
-                {
-
-                    switchGUIToProductsList();
-                    populateLV();
-                    dialog.dismiss();
-                });
+                    {
+                        switchGUIToProductsList();
+                        populeProductsListView();
+                        dialog.dismiss();
+                    });
     }
 
     private void prepareProgressDialog() {
@@ -292,8 +292,7 @@ public class UpdateActivity extends AppCompatActivity {
         doUpdateButton.setVisibility(View.VISIBLE);
     }
 
-
-    private void switchActivities() {
+    private void switchActivityToMain() {
         Intent switchActivityIntent = new Intent(this, MainActivity.class);
         startActivity(switchActivityIntent);
     }
@@ -302,15 +301,7 @@ public class UpdateActivity extends AppCompatActivity {
         return getDoSelectQueryButton();
     }
 
-    public void onClick(View v) {
-        progressDialog.show();
-
-        populateLV();
-//
-    }
-//
-
-    private void populateLV() {
+    private void populeProductsListView() {
         progressDialog.show();
         UpdateActivity.SQLQueryTask sTask = new UpdateActivity.SQLQueryTask();
         Integer[] sarr = new Integer[]{};
