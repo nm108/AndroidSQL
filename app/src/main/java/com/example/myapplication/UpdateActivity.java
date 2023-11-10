@@ -59,7 +59,27 @@ public class UpdateActivity extends AppCompatActivity {
 
     private Product product;
 
+    private boolean selecting;
+
+    private boolean updating;
+
     /* Accessors */
+
+    public boolean isSelecting() {
+        return selecting;
+    }
+
+    public void setSelecting(boolean selecting) {
+        this.selecting = selecting;
+    }
+
+    public boolean isUpdating() {
+        return updating;
+    }
+
+    public void setUpdating(boolean updating) {
+        this.updating = updating;
+    }
 
     public Button getDoUpdateQueryButton() {
         return doUpdateQueryButton;
@@ -207,7 +227,7 @@ public class UpdateActivity extends AppCompatActivity {
                 (final View v) -> {
 
                     progressDialog.show();
-                    SQLUpdateTask sqlUpdateTask = new SQLUpdateTask();
+                    SQLUpdateAsyncTask sqlUpdateTask = new SQLUpdateAsyncTask();
                     sqlUpdateTask.execute();
                 }
         );
@@ -216,7 +236,7 @@ public class UpdateActivity extends AppCompatActivity {
         doUpdateQueryButton.setOnClickListener(
                 (final View v) -> {
                     getProgressDialog().show();
-                    populeProductsListView();
+                    populateProductsListView();
                 }
         );
 
@@ -253,8 +273,10 @@ public class UpdateActivity extends AppCompatActivity {
                 (DialogInterface.OnClickListener) (dialog, which) ->
                     {
                         switchGUIToProductsList();
-                        populeProductsListView();
-                        dialog.dismiss();
+                        populateProductsListView();
+
+                        setUpdating(false);
+                        updateProgressDialog();
                     });
     }
 
@@ -301,17 +323,25 @@ public class UpdateActivity extends AppCompatActivity {
         return getDoSelectQueryButton();
     }
 
-    private void populeProductsListView() {
-        progressDialog.show();
-        UpdateActivity.SQLQueryTask sTask = new UpdateActivity.SQLQueryTask();
-        Integer[] sarr = new Integer[]{};
-        ArrayList<Product> data = new ArrayList<Product>();
 
-        sTask.execute(sarr);
-        // Wait for this worker thread’s notification
-//                    sTask.wait();
+    void updateProgressDialog () {
+        if (isSelecting() || isUpdating()) {
+            if (!getProgressDialog().isShowing()) {
+                getProgressDialog().show();
+            }
+        } else {
+            if (getProgressDialog().isShowing()) {
+                getProgressDialog().dismiss();
+            }
+        }
+    }
 
+    private void populateProductsListView() {
+        setSelecting(true);
+        updateProgressDialog();
 
+        SQLSelectAsyncTask sTask = new SQLSelectAsyncTask();
+        sTask.execute();
 
         productsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position,
@@ -322,13 +352,16 @@ public class UpdateActivity extends AppCompatActivity {
                 switchGUIToEditForm();
             }
         });
-
     }
 
-        class SQLQueryTask extends AsyncTask<Integer[], Integer, ArrayList<Product>> {
 
-            public ArrayList<Product> doInBackground(Integer[]... params) {
+        class SQLSelectAsyncTask extends AsyncTask<Void[], Void, ArrayList<Product>> {
+
+            public ArrayList<Product> doInBackground(Void[]... params) {
                 ArrayList<Product> result = null;
+                // Updating GUI
+                setSelecting(true);
+                updateProgressDialog();
 
                 JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper(context);
 
@@ -347,66 +380,69 @@ public class UpdateActivity extends AppCompatActivity {
                 if (products == null) {
                     exceptionAlertDialog.show();
 
-                    progressDialog.dismiss();
+
                     return;
                 }
-
 
                 ProductAdapter pa = new ProductAdapter(context, products);
                 productsListView.setAdapter(pa);
 
-                progressDialog.dismiss();
+                // Updating GUI
+                setSelecting(false);
+                updateProgressDialog();
 
             }
         }
-//
 
-    class SQLUpdateTask extends AsyncTask<Integer[], Integer, ArrayList<Product>> {
+        class SQLUpdateAsyncTask extends AsyncTask<Void[], Void, ArrayList<Product>> {
 
-        public ArrayList<Product> doInBackground(Integer[]... params) {
+            public ArrayList<Product> doInBackground(Void[]... params) {
+                // Updating GUI
+                setUpdating(true);
+                updateProgressDialog();
 
-            JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper(context);
-            String newProductName = newProductNameEditText.getText().toString();
-            if (newProductName.trim().equals("")) {
-                newProductName = "!!";
-            }
-            int newProductAmount;
-            try {
-                newProductAmount = Integer.parseInt(
-                        newProductAmountEditText.getText().toString()
-                );
-            } catch (NumberFormatException e) {
-                newProductAmount = -1;
-            }
+                JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper(context);
+                String newProductName = newProductNameEditText.getText().toString();
+                if (newProductName.trim().equals("")) {
+                    newProductName = "!!";
+                }
+                int newProductAmount;
+                try {
+                    newProductAmount = Integer.parseInt(
+                            newProductAmountEditText.getText().toString()
+                    );
+                } catch (NumberFormatException e) {
+                    newProductAmount = -1;
+                }
 
-            try {
-                jdbcDatabaseHelper.doUpdate(product.getId(),
-                        newProductName, newProductAmount);
-            } catch (Exception e) {
-                exceptionAlertDialog.setMessage(e.toString());
-                error = true;
+                try {
+                    jdbcDatabaseHelper.doUpdate(product.getId(),
+                            newProductName, newProductAmount);
+                } catch (Exception e) {
+                    exceptionAlertDialog.setMessage(e.toString());
+                    error = true;
+                    return null;
+                }
                 return null;
             }
-            return null;
-        }
 
-        @Override
-        protected void onPostExecute(ArrayList<Product> products) {
-            super.onPostExecute(products);
-            if (error) {
-                exceptionAlertDialog.show();
+            @Override
+            protected void onPostExecute(ArrayList<Product> products) {
+                super.onPostExecute(products);
+                if (error) {
+                    exceptionAlertDialog.show();
 
-                progressDialog.dismiss();
-                error = false;
-                return;
+                    progressDialog.dismiss();
+                    error = false;
+                    return;
+                }
+
+                operationResultAlertDialog.setMessage(PRODUCT_UPDATED_LABEL);
+
+                getOperationResultAlertDialog().show();
             }
-
-            operationResultAlertDialog.setMessage(PRODUCT_UPDATED_LABEL);
-            operationResultAlertDialog.show();
-
-            progressDialog.dismiss();
         }
-    }
+
 
 };
 
