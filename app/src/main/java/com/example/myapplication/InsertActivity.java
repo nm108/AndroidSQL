@@ -14,13 +14,9 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.material.internal.VisibilityAwareImageButton;
-
-import java.sql.SQLException;
-import java.util.ArrayList;
-
 
 public class InsertActivity extends AppCompatActivity{
+    public static final String PRODUCT_INSERTED_LABEL = "Product Inserted";
     private Button doInsertQueryButton;
 
     private Button returnButton;
@@ -61,13 +57,13 @@ private Context c = this;
         doInsertQueryButton.setOnClickListener(this::onClick);
         returnButton.setOnClickListener(
                 (final View v) -> {
-                    switchActivities();
+                    switchActivityToMain();
                 }
 
         );
 
         ad = new AlertDialog.Builder(this).create();
-        ad.setTitle("Product Inserted");
+        ad.setTitle(PRODUCT_INSERTED_LABEL);
         ad.setCancelable(false);
         ad.setCanceledOnTouchOutside(false);
         ad.setButton(
@@ -77,38 +73,35 @@ private Context c = this;
                 {
                     dialog.dismiss();
                     if (error) {
-                        switchActivities();
+                        switchActivityToMain();
                     }
                 });
     }
 
-
-
-
-private void switchActivities() {
-
+    private void switchActivityToMain() {
         Intent switchActivityIntent = new Intent(this, MainActivity.class);
         startActivity(switchActivityIntent);
     }
 
-private void onClick(View v) {
-    if (busy) return;
-    busy = true;
-    try {
-        pd.show();
+    private void onClick(View v) {
+    // we do not want clicks to queue, so we 'swallow' them.
+        if (busy) return;
+        busy = true;
 
-        SQLTask st = new SQLTask();
-        st.execute();
-    } catch (android.database.SQLException e) {
-        ad.setMessage("SQL Exception: " + e);
-        error = true;
-        ad.show();
+        try {
+            pd.show();
+            SqlInsertAsyncTask st = new SqlInsertAsyncTask();
+            st.execute();
+        } catch (android.database.SQLException e) {
+            ad.setMessage("SQL Exception: " + e);
+            error = true;
+            ad.show();
 
-    }
+        }
     // switchActivities();
     }
 
-    class SQLTask extends AsyncTask<Void[], Void, Void> {
+    class SqlInsertAsyncTask extends AsyncTask<Void[], Void, Void> {
 
         public Void doInBackground(Void[]... params) {
             String productName = productNameEditText.getText().toString();
@@ -121,8 +114,8 @@ private void onClick(View v) {
             try {
                 pamount = Integer.parseInt(
                         productAmountEditText.getText().toString()
-                );}
-            catch (Exception e) {
+                );
+            } catch (Exception e) {
                 pamount = -1;
             }
 
@@ -137,7 +130,7 @@ private void onClick(View v) {
         }
 
         protected void onPostExecute(Void v) {
-
+            // we can accept clicks again
             busy = false;
 
             pd.dismiss();
