@@ -22,6 +22,7 @@ public class InsertActivity extends AppCompatActivity{
     public static final String SQL_EXCEPTION_LABEL = "SQL Exception: ";
     public static final String EMPTY_STRING = "";
     public static final String EXCEPTION_LABEL = "Exception: ";
+    public static final String EXCEPTION_OCCURED_LABEL = "Exception Occured:";
     private Button doInsertQueryButton;
 
     private Button returnButton;
@@ -32,6 +33,8 @@ public class InsertActivity extends AppCompatActivity{
 
 
     private AlertDialog alertDialog;
+
+    private AlertDialog exceptionAlertDialog;
 
 
     private boolean busy = false;
@@ -50,6 +53,7 @@ public class InsertActivity extends AppCompatActivity{
         setContentView(R.layout.activity_insert);
         prepareProgressDialog();
         prepareAlertDialog();
+        prepareExceptionAlertDialog();
         prepareView();
     }
 
@@ -86,6 +90,23 @@ public class InsertActivity extends AppCompatActivity{
                 });
     }
 
+    private void prepareExceptionAlertDialog() {
+        exceptionAlertDialog = new AlertDialog.Builder(this).create();
+        exceptionAlertDialog.setTitle(EXCEPTION_OCCURED_LABEL);
+        exceptionAlertDialog.setCancelable(false);
+        exceptionAlertDialog.setCanceledOnTouchOutside(false);
+        exceptionAlertDialog.setButton(
+                AlertDialog.BUTTON_NEUTRAL, (CharSequence) OK_LABEL,
+                (DialogInterface.OnClickListener) (dialog, which) ->
+
+                {
+                    dialog.dismiss();
+                    if (error) {
+                        switchActivityToMain();
+                    }
+                });
+    }
+
     private void prepareProgressDialog() {
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
@@ -108,10 +129,10 @@ public class InsertActivity extends AppCompatActivity{
             progressDialog.show();
             SqlInsertAsyncTask st = new SqlInsertAsyncTask();
             st.execute();
-        } catch (android.database.SQLException e) {
-            alertDialog.setMessage(SQL_EXCEPTION_LABEL + e);
+        } catch (Exception e) {
+            exceptionAlertDialog.setMessage(SQL_EXCEPTION_LABEL + e);
             error = true;
-            alertDialog.show();
+            exceptionAlertDialog.show();
 
         }
     // switchActivities();
@@ -123,7 +144,7 @@ public class InsertActivity extends AppCompatActivity{
             String productName = productNameEditText.getText().toString();
 
             if (productName == null || productName.equals(EMPTY_STRING)) {
-                productName = "!!!";
+                productName = "!";
             }
 
             int pamount;
@@ -139,7 +160,7 @@ public class InsertActivity extends AppCompatActivity{
             try {
                 jdbcDatabaseHelper.doInsert(productName, pamount);
             } catch (Exception e) {
-                alertDialog.setMessage(EXCEPTION_LABEL +e);
+                exceptionAlertDialog.setMessage(EXCEPTION_LABEL+e);
                 error = true;
             }
             return null;
@@ -148,9 +169,13 @@ public class InsertActivity extends AppCompatActivity{
         protected void onPostExecute(Void v) {
             // we can accept clicks again
             busy = false;
-
             progressDialog.dismiss();
-            alertDialog.show();
+
+            if(error) {
+                exceptionAlertDialog.show();
+            } else {
+                alertDialog.show();
+            }
         }
 
     }
