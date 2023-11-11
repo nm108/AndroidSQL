@@ -22,7 +22,10 @@ public class ProductAdapter extends ArrayAdapter<Product> {
         Product product = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.simple_list_item, parent, false);
+            convertView = LayoutInflater.from(
+                    getContext()).inflate(
+                            R.layout.simple_list_item, parent,
+                    false);
         }
         // Lookup view for data population
         TextView tv_0 = convertView.findViewById(R.id.tv_0);
