@@ -359,11 +359,13 @@ public class DeleteActivity extends AppCompatActivity {
             updateProgressDialog();
 
             // querying database (SELECT operation).
-            JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper(context);
+            JDBCDatabaseHelper jdbcDatabaseHelper = new JDBCDatabaseHelper(getContext());
             try {
-                result = jdbcDatabaseHelper.doSelect(deleteQueryEditText.getText().toString());
+                result = jdbcDatabaseHelper.doSelect(getDeleteQueryEditText().getText().toString());
             } catch (Exception e) {
+                setError(true);
                 getErrorAlertDialog().setMessage(EXCEPTION_LABEL+e);
+                return null;
             }
             return result;
         }

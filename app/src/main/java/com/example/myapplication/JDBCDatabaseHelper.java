@@ -14,6 +14,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This is just prototype, replace it with production code.
@@ -61,29 +63,6 @@ public class JDBCDatabaseHelper {
                 sqlliteHelper.getUserName(),
                 sqlliteHelper.getPassword());
         System.out.println("conn==" + conn);
-//
-//        } catch (SQLException se) {
-//            System.out.println("1conn=="+conn);
-//
-//            if (se.getMessage() != null) {
-//                Log.e("Error 1: ", se.getMessage());
-//            }
-//
-//        } catch (ClassNotFoundException e) {
-//            System.out.println("2conn=="+conn);
-//            if (e.getMessage() != null) {
-//                Log.e("Error 3: ", e.getMessage());
-//            }
-
-//        } catch (Exception e) {
-//            System.out.println("3conn=="+conn);
-//            if (e.getMessage() != null) {
-//                System.out.println(e);
-//
-//                Log.e("Error 2: ", e.getMessage());
-//            }
-//        }
-
         return conn;
     }
 
@@ -94,17 +73,12 @@ public class JDBCDatabaseHelper {
         conn = getConnection();
         PreparedStatement statement = conn.prepareStatement("DELETE FROM Products WHERE id='" + id + "';");
         statement.executeUpdate();
-//        } catch (NullPointerException npe ) {
-//            throw new RuntimeException(npe);
-//        }
-//conn.commit();
         conn.close();
         conn = null;
     }
 
     public void doInsert(String productName, int productAmount) throws Exception {
         conn = getConnection();
-//        try {
         PreparedStatement statement = conn.prepareStatement(
                 "INSERT INTO Products (ProductName, ProductQuantity)" +
                         " VALUES('" + productName + "'," + productAmount + ")");
@@ -113,16 +87,9 @@ public class JDBCDatabaseHelper {
         statement.executeUpdate();
         conn.close();
         conn = null;
-
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
     }
 
     public void doUpdate( String id, String newProductName, int newProductAmount) throws Exception {
-
-//        Log.d("Update", "doUpdate: "+id+","+newProductName+","+newProductAmount);
-
         conn = getConnection();
 
         PreparedStatement statement = conn.prepareStatement(
@@ -139,17 +106,19 @@ public class JDBCDatabaseHelper {
     // TODO: this is just prototype, replace it with code that uses database properly.
     // returned value also needs to be modified.
     public ArrayList<Product> doSelect(String queryStr) throws Exception {
+        Pattern p = Pattern.compile("[\\p{Alnum}\\s\\#]*");
+        Matcher m = p.matcher(queryStr);
+
+        if (!m.matches()) {
+            throw new RuntimeException("Invalid input. Allowable characters are digits, letters and # character");
+        }
+
         ResultSet rs;
         ArrayList result = new ArrayList();
-
-
 
             conn = getConnection();
             final Statement statement = conn.createStatement();
             rs = statement.executeQuery("SELECT * From Products WHERE ProductName LIKE '%" + queryStr + "%'");
-
-
-        //
 
         while (rs.next()) {
             try {
