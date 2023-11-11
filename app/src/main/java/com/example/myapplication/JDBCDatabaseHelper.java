@@ -13,8 +13,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * This is just prototype, replace it with production code.
+ * Class responsible for connecting to remote database, for executing queries
+ * and database operations. (SELECT, INSERT, UPDATE, DELETE).
  */
+
 public class JDBCDatabaseHelper {
 
     private static final String driverClass = "net.sourceforge.jtds.jdbc.Driver";
@@ -48,6 +50,10 @@ public class JDBCDatabaseHelper {
 
     private Context context = null;
 
+    public Context getContext() {
+        return context;
+    }
+
     public JDBCDatabaseHelper(final Context c) {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
                 .permitAll().build();
@@ -55,9 +61,6 @@ public class JDBCDatabaseHelper {
         this.context = c;
     }
 
-    public Context getContext() {
-        return context;
-    }
 
     public Connection getConnection() throws Exception {
         if ((conn != null) && (!conn.isClosed())) {
@@ -80,6 +83,32 @@ public class JDBCDatabaseHelper {
         return conn;
     }
 
+    public ArrayList<Product> doSelect(String queryStr) throws Exception {
+        validateProductName(queryStr);
+
+        ResultSet rs;
+        ArrayList result = new ArrayList();
+
+        conn = getConnection();
+        final Statement statement = conn.createStatement();
+        rs = statement.executeQuery(
+                SQL_SELECT_PREFIX + queryStr + SQL_SELECT_POSTFIX);
+
+        while (rs.next()) {
+            try {
+                String id = rs.getString(1);
+                String name = rs.getString(2);
+                Integer amount = (Integer) rs.getInt(3);
+                Product product = new Product(id, name, amount);
+
+                result.add(product);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return result;
+    }
 
     public void doDelete(String id) throws Exception {
         validateProductId(id);
@@ -155,33 +184,4 @@ public class JDBCDatabaseHelper {
         }
     }
 
-
-    // TODO: this is just prototype, replace it with code that uses database properly.
-    // returned value also needs to be modified.
-    public ArrayList<Product> doSelect(String queryStr) throws Exception {
-        validateProductName(queryStr);
-
-        ResultSet rs;
-        ArrayList result = new ArrayList();
-
-            conn = getConnection();
-            final Statement statement = conn.createStatement();
-            rs = statement.executeQuery(
-                    SQL_SELECT_PREFIX + queryStr + SQL_SELECT_POSTFIX);
-
-        while (rs.next()) {
-            try {
-                String id = rs.getString(1);
-                String name = rs.getString(2);
-                Integer amount = (Integer) rs.getInt(3);
-                Product product = new Product(id, name, amount);
-
-                result.add(product);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        return result;
-    }
 }
