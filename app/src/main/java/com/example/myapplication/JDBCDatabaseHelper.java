@@ -2,18 +2,13 @@ package com.example.myapplication;
 
 import android.content.Context;
 import android.os.StrictMode;
-import android.util.Log;
 
-import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,21 +18,45 @@ import java.util.regex.Pattern;
 public class JDBCDatabaseHelper {
 
     private static final String driverClass = "net.sourceforge.jtds.jdbc.Driver";
+    public static final String SQL_CONNURL_JDBC_JTDS_SQLSERVER_PREFIX_LABEL = "jdbc:jtds:sqlserver://";
+    public static final String IP_PORT_SEPARATOR_STRING_LABEL = ":";
+    public static final String INSTANCE_LABEL = ";instance=";
+    public static final String DATABASE_LABEL = ";Database='";
+    public static final String SQL_CONNURL_TERMINATOR = "'";
+    public static final String DELETE_FROM_PRODUCTS_WHERE_ID_LABEL = "DELETE FROM Products WHERE id='";
+    public static final String SQL_DELETESTRING_TERMINATOR = "';";
+    public static final String INSERT_INTO_PRODUCTS_PRODUCT_NAME_PRODUCT_QUANTITY_LABEL = "INSERT INTO Products (ProductName, ProductQuantity)";
+    public static final String VALUES_LABEL = " VALUES('";
+    public static final String INSERT_SEPARATOR = "',";
+    public static final String SQL_INSERTSTRING_TERMINATOR = ")";
+    public static final String SQL_UPDATE_PRODUCTS_LABEL = "UPDATE Products ";
+    public static final String SQL_UPDATE_SET_PRODUCT_NAME_LABEL = " SET ProductName='";
+    public static final String SQL_UPDATE_PRODUCT_QUANTITY_LABEL = "', ProductQuantity='";
+    public static final String SQL_UPDATE_WHERE_ID_LABEL = "' WHERE ID='";
+    public static final String SQL_UPDATESTRING_TERMINATOR = "'";
+    public static final String IS_DIGIT_PRODUCTID_REGEX = "[\\p{IsDigit}]*";
+    public static final String EXCEPTION_STRING_PRODUCT_ID = "Invalid input (id). Allowable characters are digits";
+    public static final String IS_DIGIT_PRODUCTAMOUNT_REGEX = "[\\p{IsDigit}]*";
+    public static final String EXCEPTION_STRING_PRODUCT_AMOUNT = "Invalid input (amount). Allowable characters are digits";
+    public static final String IS_ALNUM_PRODUCTNAME_REGEX = "[\\p{Alnum}\\s\\#]*";
+    public static final String EXCEPTION_STRING_PRODUCT_NAME = "Invalid input (product name).\n\nAllowable characters are digits, letters and # character";
+    public static final String SQL_SELECT_PREFIX = "SELECT * From Products WHERE ProductName LIKE '%";
+    public static final String SQL_SELECT_POSTFIX = "%'";
 
 
     private Connection conn = null;
 
-    private Context c = null;
+    private Context context = null;
 
     public JDBCDatabaseHelper(final Context c) {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
                 .permitAll().build();
         StrictMode.setThreadPolicy(policy);
-        this.c = c;
+        this.context = c;
     }
 
     public Context getContext() {
-        return c;
+        return context;
     }
 
     public Connection getConnection() throws Exception {
@@ -46,19 +65,18 @@ public class JDBCDatabaseHelper {
         };
 
         Class.forName(driverClass).newInstance();
-        DBConfigSQLiteHelper sqlliteHelper = new DBConfigSQLiteHelper(c);
+        DBConfigSQLiteHelper sqlliteHelper = new DBConfigSQLiteHelper(context);
 
         final String connURL =
-                "jdbc:jtds:sqlserver://" + sqlliteHelper.getIpAddress() +
-                ":"+sqlliteHelper.getPort() +
-                ";instance=" + sqlliteHelper.getDBInstance() +
-                ";Database='" + sqlliteHelper.getDBName() + "'";
-
+                SQL_CONNURL_JDBC_JTDS_SQLSERVER_PREFIX_LABEL +
+                        sqlliteHelper.getIpAddress() +
+                        IP_PORT_SEPARATOR_STRING_LABEL +sqlliteHelper.getPort() +
+                        INSTANCE_LABEL + sqlliteHelper.getDBInstance() +
+                        DATABASE_LABEL + sqlliteHelper.getDBName() + SQL_CONNURL_TERMINATOR;
 
         conn = DriverManager.getConnection(connURL,
                 sqlliteHelper.getUserName(),
                 sqlliteHelper.getPassword());
-        System.out.println("conn==" + conn);
         return conn;
     }
 
@@ -67,7 +85,9 @@ public class JDBCDatabaseHelper {
         validateProductId(id);
 
         conn = getConnection();
-        PreparedStatement statement = conn.prepareStatement("DELETE FROM Products WHERE id='" + id + "';");
+        PreparedStatement statement =
+                conn.prepareStatement(DELETE_FROM_PRODUCTS_WHERE_ID_LABEL + id +
+                        SQL_DELETESTRING_TERMINATOR);
         statement.executeUpdate();
         conn.close();
         conn = null;
@@ -80,8 +100,9 @@ public class JDBCDatabaseHelper {
         conn = getConnection();
 
         PreparedStatement statement = conn.prepareStatement(
-                "INSERT INTO Products (ProductName, ProductQuantity)" +
-                        " VALUES('" + productName + "'," + productAmount + ")");
+                INSERT_INTO_PRODUCTS_PRODUCT_NAME_PRODUCT_QUANTITY_LABEL +
+                        VALUES_LABEL + productName + INSERT_SEPARATOR +
+                        productAmount + SQL_INSERTSTRING_TERMINATOR);
 
 
         statement.executeUpdate();
@@ -97,39 +118,40 @@ public class JDBCDatabaseHelper {
         conn = getConnection();
 
         PreparedStatement statement = conn.prepareStatement(
-                    "UPDATE Products " +
-                            " SET ProductName='"+ newProductName +
-                            "', ProductQuantity='" + newProductAmount +
-                            "' WHERE ID='"+id+"'");
+                    SQL_UPDATE_PRODUCTS_LABEL +
+                            SQL_UPDATE_SET_PRODUCT_NAME_LABEL + newProductName +
+                            SQL_UPDATE_PRODUCT_QUANTITY_LABEL + newProductAmount +
+                            SQL_UPDATE_WHERE_ID_LABEL +id+
+                            SQL_UPDATESTRING_TERMINATOR);
             statement.executeUpdate();
             conn.close();
             conn = null;
     }
 
     private static void validateProductId(String id) {
-        Pattern productIdPattern = Pattern.compile("[\\p{IsDigit}]*");
+        Pattern productIdPattern = Pattern.compile(IS_DIGIT_PRODUCTID_REGEX);
         Matcher productIdMatcher = productIdPattern.matcher(id);
 
         if (!productIdMatcher.matches()) {
-            throw new RuntimeException("Invalid input (id). Allowable characters are digits");
+            throw new RuntimeException(EXCEPTION_STRING_PRODUCT_ID);
         }
     }
 
     private static void validateProductAmount(int newProductAmount) {
-        Pattern productAmountPattern = Pattern.compile("[\\p{IsDigit}]*");
+        Pattern productAmountPattern = Pattern.compile(IS_DIGIT_PRODUCTAMOUNT_REGEX);
         Matcher productAmountMatcher = productAmountPattern.matcher(""+ newProductAmount);
 
         if (!productAmountMatcher.matches()) {
-            throw new RuntimeException("Invalid input (amount). Allowable characters are digits");
+            throw new RuntimeException(EXCEPTION_STRING_PRODUCT_AMOUNT);
         }
     }
 
     private static void validateProductName(String newProductName) {
-        Pattern productNamePattern = Pattern.compile("[\\p{Alnum}\\s\\#]*");
+        Pattern productNamePattern = Pattern.compile(IS_ALNUM_PRODUCTNAME_REGEX);
         Matcher productNameMatcher = productNamePattern.matcher(newProductName);
 
         if (!productNameMatcher.matches()) {
-            throw new RuntimeException("Invalid input (product name).\nAllowable characters are digits, letters and # character");
+            throw new RuntimeException(EXCEPTION_STRING_PRODUCT_NAME);
         }
     }
 
@@ -144,7 +166,8 @@ public class JDBCDatabaseHelper {
 
             conn = getConnection();
             final Statement statement = conn.createStatement();
-            rs = statement.executeQuery("SELECT * From Products WHERE ProductName LIKE '%" + queryStr + "%'");
+            rs = statement.executeQuery(
+                    SQL_SELECT_PREFIX + queryStr + SQL_SELECT_POSTFIX);
 
         while (rs.next()) {
             try {
