@@ -43,13 +43,9 @@ public class JDBCDatabaseHelper {
     public Connection getConnection() throws Exception {
         if ((conn != null) && (!conn.isClosed())) {
             return conn;
-        }
-        ;
+        };
 
-
-//        try {
         Class.forName(driverClass).newInstance();
-
         DBConfigSQLiteHelper sqlliteHelper = new DBConfigSQLiteHelper(c);
 
         final String connURL =
@@ -68,8 +64,8 @@ public class JDBCDatabaseHelper {
 
 
     public void doDelete(String id) throws Exception {
+        validateProductId(id);
 
-//        try {
         conn = getConnection();
         PreparedStatement statement = conn.prepareStatement("DELETE FROM Products WHERE id='" + id + "';");
         statement.executeUpdate();
@@ -78,7 +74,11 @@ public class JDBCDatabaseHelper {
     }
 
     public void doInsert(String productName, int productAmount) throws Exception {
+        validateProductName(productName);
+        validateProductAmount(productAmount);
+
         conn = getConnection();
+
         PreparedStatement statement = conn.prepareStatement(
                 "INSERT INTO Products (ProductName, ProductQuantity)" +
                         " VALUES('" + productName + "'," + productAmount + ")");
@@ -152,18 +152,13 @@ public class JDBCDatabaseHelper {
                 String name = rs.getString(2);
                 Integer amount = (Integer) rs.getInt(3);
                 Product product = new Product(id, name, amount);
-//                result.add(str);
+
                 result.add(product);
-//                System.out.println("prod="+product.toString());
-//                result.add(str+":"+intc);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
 
-        //System.out.println("result="+result);
-//        conn.close();
-//        conn = null;
-        return result;// result;
+        return result;
     }
 }
