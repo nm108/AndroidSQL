@@ -90,6 +90,29 @@ public class JDBCDatabaseHelper {
     }
 
     public void doUpdate( String id, String newProductName, int newProductAmount) throws Exception {
+        Pattern productNamePattern = Pattern.compile("[\\p{Alnum}\\s\\#]*");
+        Matcher productNameMatcher = productNamePattern.matcher(newProductName);
+
+        if (!productNameMatcher.matches()) {
+            throw new RuntimeException("Invalid input (product name).\nAllowable characters are digits, letters and # character");
+        }
+
+        Pattern productAmountPattern = Pattern.compile("[\\p{IsDigit}]*");
+        Matcher productAmountMatcher = productAmountPattern.matcher(""+newProductAmount);
+
+        if (!productAmountMatcher.matches()) {
+            throw new RuntimeException("Invalid input (amount). Allowable characters are digits");
+        }
+
+        Pattern productIdPattern = Pattern.compile("[\\p{IsDigit}]*");
+        Matcher productIdMatcher = productIdPattern.matcher(id);
+
+        if (!productIdMatcher.matches()) {
+            throw new RuntimeException("Invalid input (id). Allowable characters are digits");
+        }
+
+
+
         conn = getConnection();
 
         PreparedStatement statement = conn.prepareStatement(
