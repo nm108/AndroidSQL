@@ -90,28 +90,9 @@ public class JDBCDatabaseHelper {
     }
 
     public void doUpdate( String id, String newProductName, int newProductAmount) throws Exception {
-        Pattern productNamePattern = Pattern.compile("[\\p{Alnum}\\s\\#]*");
-        Matcher productNameMatcher = productNamePattern.matcher(newProductName);
-
-        if (!productNameMatcher.matches()) {
-            throw new RuntimeException("Invalid input (product name).\nAllowable characters are digits, letters and # character");
-        }
-
-        Pattern productAmountPattern = Pattern.compile("[\\p{IsDigit}]*");
-        Matcher productAmountMatcher = productAmountPattern.matcher(""+newProductAmount);
-
-        if (!productAmountMatcher.matches()) {
-            throw new RuntimeException("Invalid input (amount). Allowable characters are digits");
-        }
-
-        Pattern productIdPattern = Pattern.compile("[\\p{IsDigit}]*");
-        Matcher productIdMatcher = productIdPattern.matcher(id);
-
-        if (!productIdMatcher.matches()) {
-            throw new RuntimeException("Invalid input (id). Allowable characters are digits");
-        }
-
-
+        validateProductName(newProductName);
+        validateProductAmount(newProductAmount);
+        validateProductId(id);
 
         conn = getConnection();
 
@@ -125,16 +106,38 @@ public class JDBCDatabaseHelper {
             conn = null;
     }
 
+    private static void validateProductId(String id) {
+        Pattern productIdPattern = Pattern.compile("[\\p{IsDigit}]*");
+        Matcher productIdMatcher = productIdPattern.matcher(id);
+
+        if (!productIdMatcher.matches()) {
+            throw new RuntimeException("Invalid input (id). Allowable characters are digits");
+        }
+    }
+
+    private static void validateProductAmount(int newProductAmount) {
+        Pattern productAmountPattern = Pattern.compile("[\\p{IsDigit}]*");
+        Matcher productAmountMatcher = productAmountPattern.matcher(""+ newProductAmount);
+
+        if (!productAmountMatcher.matches()) {
+            throw new RuntimeException("Invalid input (amount). Allowable characters are digits");
+        }
+    }
+
+    private static void validateProductName(String newProductName) {
+        Pattern productNamePattern = Pattern.compile("[\\p{Alnum}\\s\\#]*");
+        Matcher productNameMatcher = productNamePattern.matcher(newProductName);
+
+        if (!productNameMatcher.matches()) {
+            throw new RuntimeException("Invalid input (product name).\nAllowable characters are digits, letters and # character");
+        }
+    }
+
 
     // TODO: this is just prototype, replace it with code that uses database properly.
     // returned value also needs to be modified.
     public ArrayList<Product> doSelect(String queryStr) throws Exception {
-        Pattern p = Pattern.compile("[\\p{Alnum}\\s\\#]*");
-        Matcher m = p.matcher(queryStr);
-
-        if (!m.matches()) {
-            throw new RuntimeException("Invalid input. Allowable characters are digits, letters and # character");
-        }
+        validateProductName(queryStr);
 
         ResultSet rs;
         ArrayList result = new ArrayList();
