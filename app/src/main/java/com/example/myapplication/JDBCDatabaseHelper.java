@@ -62,6 +62,10 @@ public class JDBCDatabaseHelper {
     }
 
 
+    /** Method responsible for getting/creating connection to db.
+     *
+     * @return open connection to db.
+     */
     public Connection getConnection() throws Exception {
         if ((conn != null) && (!conn.isClosed())) {
             return conn;
@@ -83,6 +87,12 @@ public class JDBCDatabaseHelper {
         return conn;
     }
 
+    /** Method responsible for fetching data from db.
+     * (SQL SELECT)
+     *
+     * @param queryStr name of product or a part of product's name.
+     * @return data fetched in ArrayList<Product> format.
+     */
     public ArrayList<Product> doSelect(String queryStr) throws Exception {
         validateProductName(queryStr);
 
@@ -110,6 +120,11 @@ public class JDBCDatabaseHelper {
         return result;
     }
 
+    /** Method responsible for deleting data from db.
+     * (SQL DELETE)
+     *
+     * @param id identifier of product to be deleted from db.
+     */
     public void doDelete(String id) throws Exception {
         validateProductId(id);
 
@@ -122,6 +137,12 @@ public class JDBCDatabaseHelper {
         conn = null;
     }
 
+    /** Method responsible for inserting data to db.
+     * (SQL INSERT)
+     *
+     * @param productName name of a product to be inserted.
+     * @param  productAmount amount of a product to be inserted.
+     */
     public void doInsert(String productName, int productAmount) throws Exception {
         validateProductName(productName);
         validateProductAmount(productAmount);
@@ -139,6 +160,13 @@ public class JDBCDatabaseHelper {
         conn = null;
     }
 
+    /** Method responsible for updating data in db.
+     * (SQL UPDATE)
+     *
+     * @param newProductName name of a product to be updated.
+     * @param newProductAmount amount of a product to be updated.
+     * @param id identifier of a product to be updated.
+     */
     public void doUpdate( String id, String newProductName, int newProductAmount) throws Exception {
         validateProductName(newProductName);
         validateProductAmount(newProductAmount);
@@ -157,6 +185,12 @@ public class JDBCDatabaseHelper {
             conn = null;
     }
 
+    /**
+     * To prevent SQL Injection attacks, we validate input before connecting
+     * to database. For extra security VPN can be used.
+     *
+     * @param id product's identifier to be validated.
+     */
     private static void validateProductId(String id) {
         Pattern productIdPattern = Pattern.compile(IS_DIGIT_PRODUCTID_REGEX);
         Matcher productIdMatcher = productIdPattern.matcher(id);
@@ -166,18 +200,32 @@ public class JDBCDatabaseHelper {
         }
     }
 
-    private static void validateProductAmount(int newProductAmount) {
+
+    /**
+     * To prevent SQL Injection attacks, we validate input before connecting
+     * to database. For extra security VPN can be used.
+     *
+     * @param productAmount product's amount to be validated.
+     */
+    private static void validateProductAmount(int productAmount) {
         Pattern productAmountPattern = Pattern.compile(IS_DIGIT_PRODUCTAMOUNT_REGEX);
-        Matcher productAmountMatcher = productAmountPattern.matcher(""+ newProductAmount);
+        Matcher productAmountMatcher = productAmountPattern.matcher(""+ productAmount);
 
         if (!productAmountMatcher.matches()) {
             throw new RuntimeException(EXCEPTION_STRING_PRODUCT_AMOUNT);
         }
     }
 
-    private static void validateProductName(String newProductName) {
+
+    /**
+     * To prevent SQL Injection attacks, we validate input before connecting
+     * to database. For extra security VPN can be used.
+     *
+     * @param productName product's name to be validated.
+     */
+    private static void validateProductName(String productName) {
         Pattern productNamePattern = Pattern.compile(IS_ALNUM_PRODUCTNAME_REGEX);
-        Matcher productNameMatcher = productNamePattern.matcher(newProductName);
+        Matcher productNameMatcher = productNamePattern.matcher(productName);
 
         if (!productNameMatcher.matches()) {
             throw new RuntimeException(EXCEPTION_STRING_PRODUCT_NAME);
