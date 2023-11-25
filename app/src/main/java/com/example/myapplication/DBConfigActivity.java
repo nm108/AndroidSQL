@@ -83,7 +83,7 @@ public class DBConfigActivity extends AppCompatActivity {
                     sqlh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.DBInstanceEditText), DBConfigEntry.DB_INSTANCE);
                     sqlh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.UsernameEditText), DBConfigEntry.USER_NAME);
                     sqlh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.PasswordEditText), DBConfigEntry.PASSWORD);
-                    switchActivities();
+                    switchActivityToMain();
                 });
 
 
@@ -103,14 +103,14 @@ public class DBConfigActivity extends AppCompatActivity {
         returnButton = findViewById(R.id.ReturnButton);
         returnButton.setOnClickListener(
                 (final View v) -> {
-                    switchActivities();
+                    switchActivityToMain();
                 }
         );
 
     }
 
 
-    private void switchActivities() {
+    private void switchActivityToMain() {
         Intent switchActivityIntent = new Intent(this, MainActivity.class);
         startActivity(switchActivityIntent);
     }
