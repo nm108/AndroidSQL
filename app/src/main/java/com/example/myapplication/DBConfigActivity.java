@@ -9,6 +9,12 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+/**
+ * Activity class responsible for setting/editing Remote DB Connection
+ * information.
+ *
+ * @author nm108
+ */
 public class DBConfigActivity extends AppCompatActivity {
 
     // State
@@ -189,9 +195,55 @@ public class DBConfigActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_remote_db_config);
 
+        setContentView(R.layout.activity_remote_db_config);
         setTitleTextView(findViewById(R.id.TitleTextView));
+
+        prepareInputForm();
+        prepareSaveConfigButton();
+        prepareResetToDefaultsButton();
+        prepareResetButton();
+
+    }
+
+    private void prepareResetButton() {
+        setReturnButton(findViewById(R.id.ReturnButton));
+        getReturnButton().setOnClickListener(
+                (final View v) -> {
+                    switchActivityToMain();
+                }
+        );
+    }
+
+    private void prepareResetToDefaultsButton() {
+        setResetToDefaultsButton(findViewById(R.id.ResetToDefaultsButton));
+        getResetToDefaultsButton().setOnClickListener(
+                (final View v) -> {
+                    sqlh.setDbConfigToDefault(DBConfigActivity.this);
+
+                    // restart activity
+                    finish();
+                    startActivity(getIntent());
+
+                }
+        );
+    }
+
+    private void prepareSaveConfigButton() {
+        setSaveConfigButton(findViewById(R.id.SaveConfigButton));
+        getSaveConfigButton().setOnClickListener(
+                (final View v) -> {
+                    sqlh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.IPAddressEditText), DBConfigEntry.IP_ADDRESS);
+                    sqlh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.PortEditText), DBConfigEntry.PORT);
+                    sqlh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.DBNameEditText), DBConfigEntry.DB_NAME);
+                    sqlh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.DBInstanceEditText), DBConfigEntry.DB_INSTANCE);
+                    sqlh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.UsernameEditText), DBConfigEntry.USER_NAME);
+                    sqlh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.PasswordEditText), DBConfigEntry.PASSWORD);
+                    switchActivityToMain();
+                });
+    }
+
+    private void prepareInputForm() {
         setIpAddressTextView(findViewById(R.id.IPAddressTextView));
         setIpAddressEditText(findViewById(R.id.IPAddressEditText));
         setPortTextView(findViewById(R.id.PortTextView));
@@ -214,38 +266,6 @@ public class DBConfigActivity extends AppCompatActivity {
 
         getUserNameEditText().setText(sqlh.getUserName());
         getPasswordEditText().setText(sqlh.getPassword());
-
-        setSaveConfigButton(findViewById(R.id.SaveConfigButton));
-        getSaveConfigButton().setOnClickListener(
-                (final View v) -> {
-                    sqlh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.IPAddressEditText), DBConfigEntry.IP_ADDRESS);
-                    sqlh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.PortEditText), DBConfigEntry.PORT);
-                    sqlh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.DBNameEditText), DBConfigEntry.DB_NAME);
-                    sqlh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.DBInstanceEditText), DBConfigEntry.DB_INSTANCE);
-                    sqlh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.UsernameEditText), DBConfigEntry.USER_NAME);
-                    sqlh.setDbConfigValue(DBConfigActivity.this, findViewById(R.id.PasswordEditText), DBConfigEntry.PASSWORD);
-                    switchActivityToMain();
-                });
-
-        setResetToDefaultsButton(findViewById(R.id.ResetToDefaultsButton));
-        getResetToDefaultsButton().setOnClickListener(
-                (final View v) -> {
-                    sqlh.setDbConfigToDefault(DBConfigActivity.this);
-
-                    // restart activity
-                    finish();
-                    startActivity(getIntent());
-
-                }
-        );
-
-        setReturnButton(findViewById(R.id.ReturnButton));
-        getReturnButton().setOnClickListener(
-                (final View v) -> {
-                    switchActivityToMain();
-                }
-        );
-
     }
 
     private void switchActivityToMain() {
